@@ -1,0 +1,10 @@
+---
+Name: elementalvirtual
+After: 'elemental'
+---
+DNADesign\Elemental\Models\BaseElement:
+  extensions:
+    - DNADesign\Elemental\Virtual\Extensions\BaseElementExtension
+DNADesign\Elemental\Models\ElementalArea:
+  extensions:
+    - DNADesign\Elemental\Virtual\Extensions\ElementalAreasExtension
