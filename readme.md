@@ -9,8 +9,7 @@
 ## Introduction
 
 This module extends the Elemental module to provide the ability to have blocks
-linked to multiple pages. This is current a WIP for v2.0.0 of the Elemental
-module.
+linked to multiple pages.
 
 ## Installation
 

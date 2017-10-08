@@ -2,7 +2,7 @@
 
 namespace DNADesign\Elemental\Virtual\Forms;
 
-use DNADesign\Elemental\Virtual\Models\ElementVirtualLinked;
+use DNADesign\Elemental\Virtual\Models\ElementVirtual;
 
 use SilverStripe\Core\Convert;
 use SilverStripe\Forms\GridField\GridField;
@@ -54,10 +54,10 @@ class ElementalGridFieldAddExistingAutocompleter extends GridFieldAddExistingAut
             if ($object) {
                 // if the object is currently not linked to either a page or another list then we want to link to
                 // the original, otherwise link to a clone
-                if (!$object->ParentID && !$object->ListID) {
+                if (!$object->ParentID) {
                     $dataList->add($object);
                 } else {
-                    $virtual = new ElementVirtualLinked();
+                    $virtual = ElementVirtual::create();
                     $virtual->LinkedElementID = $object->ID;
                     $virtual->write();
 

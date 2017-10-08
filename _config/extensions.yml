@@ -5,6 +5,6 @@ After: 'elemental'
 DNADesign\Elemental\Models\BaseElement:
   extensions:
     - DNADesign\Elemental\Virtual\Extensions\BaseElementExtension
-DNADesign\Elemental\Models\ElementalArea:
+DNADesign\Elemental\ElementalEditor:
   extensions:
-    - DNADesign\Elemental\Virtual\Extensions\ElementalAreasExtension
+    - DNADesign\Elemental\Virtual\Extensions\ElementalEditorExtension

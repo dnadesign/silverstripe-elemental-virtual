@@ -18,6 +18,44 @@ class ElementVirtualLinkedController extends ElementController
         return $this->renderWith('ElementHolder_VirtualLinked');
     }
 
+    /**
+     * @param string $action
+     *
+     * @return string
+     */
+    public function Link($action = null)
+    {
+        if ($this->data()->virtualOwner) {
+            $controller = ElementController::create($this->data()->virtualOwner);
+
+            return $controller->Link($action);
+        }
+
+        return parent::Link($action);
+    }
+
+    /**
+     * if this is a virtual request, change the hash if set.
+     *
+     * @param string $url
+     * @param int $code
+     *
+     * @return HTTPResponse
+     */
+    public function redirect($url, $code = 302)
+    {
+        if ($this->data()->virtualOwner) {
+            $parts = explode('#', $url);
+            if (isset($parts[1])) {
+                $url = $parts[0] . '#' . $this->data()->virtualOwner->ID;
+            }
+        }
+
+        return parent::redirect($url, $code);
+    }
+
+
+
     public function __call($method, $arguments)
     {
         try {
@@ -46,6 +84,7 @@ class ElementVirtualLinkedController extends ElementController
         }
 
         $controller = $this->LinkedElement()->getController();
+
         return $controller->hasAction($action);
     }
 
@@ -56,6 +95,7 @@ class ElementVirtualLinkedController extends ElementController
         }
 
         $controller = $this->LinkedElement()->getController();
+
         return $controller->checkAccessAction($action);
     }
 }

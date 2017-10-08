@@ -45,27 +45,49 @@ class ElementVirtual extends BaseElement
     /**
      * @var string
      */
-    private static $title = 'Virtual linked Element';
+    private static $title = 'Virtual Element';
 
     /**
      * @var string
      */
-    private static $singular_name = 'Virtual linked Element';
+    private static $singular_name = 'Virtual Element';
 
+    /**
+     * @param BaseElement
+     * @param boolean $isSingleton
+     * @param DataModel $model
+     */
     public function __construct($record = null, $isSingleton = false, $model = null)
     {
         parent::__construct($record, $isSingleton, $model);
+
         $this->LinkedElement()->setVirtualOwner($this);
     }
 
+    /**
+     * @return string
+     */
     public function getTitle()
     {
-        return $this->LinkedElement()->getTitle();
+        if ($el = $this->LinkedElement()) {
+            return $el->getTitle();
+        } else {
+            return _t(__CLASS__, $this->config()->title);
+        }
     }
 
     public function i18n_singular_name()
     {
         return _t(__CLASS__, $this->LinkedElement()->config()->title);
+    }
+
+    /**
+     * Block should not appear in the create list
+     *
+     */
+    public function canCreateBlock()
+    {
+        return false;
     }
 
     public function getCMSFields()

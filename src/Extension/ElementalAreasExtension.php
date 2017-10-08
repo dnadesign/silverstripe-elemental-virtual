@@ -3,16 +3,20 @@
 namespace DNADesign\Elemental\Virtual\Extensions;
 
 use SilverStripe\ORM\DataExtension;
+use DNADesign\Elemental\Models\BaseElement;
+use SilverStripe\Forms\GridField\GridFieldDeleteAction;
 use DNADesign\Elemental\Virtual\Forms\ElementalGridFieldAddExistingAutocompleter;
 use DNADesign\Elemental\Virtual\Forms\ElementalGridFieldDeleteAction;
 
-class ElementalAreasExtension extends DataExtension
+class ElementalEditorExtension extends DataExtension
 {
-    public function updateElementalAreaGridField($gridField)
+    public function updateField($gridField)
     {
+        $searchList = BaseElement::get()->filter('AvailableGlobally', 1);
+
         $gridField->getConfig()
             ->removeComponentsByType(GridFieldDeleteAction::class)
-            ->addComponent($autocomplete = new ElementalGridFieldAddExistingAutocompleter('buttons-before-right'))
+            ->addComponent($autocomplete = new ElementalGridFieldAddExistingAutocompleter('toolbar-header-right'))
             ->addComponent(new ElementalGridFieldDeleteAction());
 
         $autocomplete->setSearchList($searchList);

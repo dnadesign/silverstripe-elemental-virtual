@@ -4,6 +4,7 @@ namespace DNADesign\Elemental\Virtual\Tests;
 
 use DNADesign\Elemental\Models\BaseElement;
 use DNADesign\Elemental\Models\ElementalArea;
+use DNADesign\Elemental\Virtual\Model\ElementVirtual;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
 
@@ -22,9 +23,9 @@ class BaseElementExtensionTests extends SapphireTest
         $baseElement2->write();
         $baseElement3 = BaseElement::create(array('Title' => 'Element 2', 'Sort' => 3));
         $baseElement3->write();
-        $virtElement1 = ElementVirtualLinked::create(array('LinkedElementID' => $baseElement2->ID));
+        $virtElement1 = ElementVirtual::create(array('LinkedElementID' => $baseElement2->ID));
         $virtElement1->write();
-        $virtElement2 = ElementVirtualLinked::create(array('LinkedElementID' => $baseElement3->ID));
+        $virtElement2 = ElementVirtual::create(array('LinkedElementID' => $baseElement3->ID));
         $virtElement2->write();
 
         $area = ElementalArea::create();

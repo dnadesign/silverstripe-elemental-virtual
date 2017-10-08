@@ -4,6 +4,8 @@ namespace DNADesign\Elemental\Virtual\Extensions;
 
 use SilverStripe\ORM\DataExtension;
 use SilverStripe\Forms\FieldList;
+use SilverStripe\Versioned\Versioned;
+
 use DNADesign\Elemental\Virtual\Model\ElementVirtual;
 
 class BaseElementExtension extends DataExtension
@@ -72,12 +74,31 @@ class BaseElementExtension extends DataExtension
     }
 
     /**
+     * @return DataList
+     */
+    public function getPublishedVirtualElements()
+    {
+        return ElementVirtual::get()->filter('LinkedElementID', $this->owner->ID)->setDataQueryParam([
+            'Versioned.mode' => 'stage',
+            'Versioned.stage' => 'Live'
+        ]);
+    }
+
+    /**
      * @param FieldList
      *
      * @return FieldList
      */
     public function updateCMSFields(FieldList $fields)
     {
+        $global = $fields->dataFieldByName('AvailableGlobally');
+
+        if ($global) {
+            $fields->removeByName('AvailableGlobally');
+
+            $fields->addFieldToTab('Root.Settings', $global);
+        }
+
         if ($virtual = $fields->dataFieldByName('VirtualClones')) {
             if ($this->owner->VirtualClones()->Count() > 0) {
                 $tab = $fields->findOrMakeTab('Root.VirtualClones');
@@ -120,7 +141,6 @@ class BaseElementExtension extends DataExtension
         }
     }
 
-
     /**
      * Ensure that if there are elements that are virtualised from this element
      * that we move the original element to replace one of the virtual elements
@@ -131,14 +151,15 @@ class BaseElementExtension extends DataExtension
     {
         if (Versioned::get_reading_mode() == 'Stage.Stage') {
             $firstVirtual = false;
-            $allVirtual = $this->getVirtualLinkedElements();
-            if ($this->getPublishedVirtualLinkedElements()->Count() > 0) {
+            $allVirtual = $this->getVirtualElements();
+
+            if ($this->getPublishedVirtualElements()->Count() > 0) {
                 // choose the first one
-                $firstVirtual = $this->getPublishedVirtualLinkedElements()->First();
+                $firstVirtual = $this->getPublishedVirtualElements()->First();
                 $wasPublished = true;
             } elseif ($allVirtual->Count() > 0) {
                 // choose the first one
-                $firstVirtual = $this->getVirtualLinkedElements()->First();
+                $firstVirtual = $this->getVirtualElements()->First();
                 $wasPublished = false;
             }
             if ($firstVirtual) {
