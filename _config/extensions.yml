@@ -8,3 +8,6 @@ DNADesign\Elemental\Models\BaseElement:
 DNADesign\Elemental\ElementalEditor:
   extensions:
     - DNADesign\Elemental\Virtual\Extensions\ElementalEditorExtension
+SilverStripe\Admin\LeftAndMain:
+  extra_requirements_css:
+    - 'dnadesign/silverstripe-elemental-virtual:css/elemental-admin.css'

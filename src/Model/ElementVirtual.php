@@ -23,7 +23,7 @@ class ElementVirtual extends BaseElement
     /**
      * @var string
      */
-    private static $icon = 'elemental-virtual/images/virtual.svg';
+    private static $icon = 'dnadesign/elemental-virtual:images/virtual.svg';
 
     /**
      * @var array
