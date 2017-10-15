@@ -85,7 +85,7 @@ class ElementVirtual extends BaseElement
      * Block should not appear in the create list
      *
      */
-    public function canCreateBlock()
+    public function canCreateElemental()
     {
         return false;
     }

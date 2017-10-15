@@ -7,6 +7,7 @@ use DNADesign\Elemental\Models\BaseElement;
 use SilverStripe\Forms\GridField\GridFieldDeleteAction;
 use DNADesign\Elemental\Virtual\Forms\ElementalGridFieldAddExistingAutocompleter;
 use DNADesign\Elemental\Virtual\Forms\ElementalGridFieldDeleteAction;
+use DNADesign\Elemental\Virtual\Model\ElementVirtual;
 
 class ElementalEditorExtension extends DataExtension
 {
@@ -22,5 +23,12 @@ class ElementalEditorExtension extends DataExtension
         $autocomplete->setSearchList($searchList);
         $autocomplete->setResultsFormat('($ID) $Title');
         $autocomplete->setSearchFields(array('ID', 'Title'));
+    }
+
+    public function updateGetTypes(&$types)
+    {
+        if (isset($types[ElementVirtual::class])) {
+            unset($types[ElementVirtual::class]);
+        }
     }
 }
