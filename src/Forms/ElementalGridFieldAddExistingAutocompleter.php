@@ -1,8 +1,8 @@
 <?php
 
-namespace DNADesign\Elemental\Virtual\Forms;
+namespace SilverStripe\Elemental\Virtual\Forms;
 
-use DNADesign\Elemental\Virtual\Models\ElementVirtual;
+use SilverStripe\Elemental\Virtual\Models\ElementVirtual;
 
 use SilverStripe\Core\Convert;
 use SilverStripe\Forms\GridField\GridField;

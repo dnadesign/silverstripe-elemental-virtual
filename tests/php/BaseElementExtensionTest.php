@@ -1,10 +1,10 @@
 <?php
 
-namespace DNADesign\Elemental\Virtual\Tests;
+namespace SilverStripe\Elemental\Virtual\Tests;
 
 use DNADesign\Elemental\Models\BaseElement;
 use DNADesign\Elemental\Models\ElementalArea;
-use DNADesign\Elemental\Virtual\Model\ElementVirtual;
+use SilverStripe\Elemental\Virtual\Model\ElementVirtual;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
 

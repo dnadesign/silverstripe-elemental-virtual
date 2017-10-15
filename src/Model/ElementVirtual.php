@@ -1,6 +1,6 @@
 <?php
 
-namespace DNADesign\Elemental\Virtual\Model;
+namespace SilverStripe\Elemental\Virtual\Model;
 
 use DNADesign\Elemental\Models\BaseElement;
 use SilverStripe\Forms\FieldList;
@@ -23,7 +23,7 @@ class ElementVirtual extends BaseElement
     /**
      * @var string
      */
-    private static $icon = 'dnadesign/elemental-virtual:images/virtual.svg';
+    private static $icon = 'silverstripe/elemental-virtual:images/virtual.svg';
 
     /**
      * @var array

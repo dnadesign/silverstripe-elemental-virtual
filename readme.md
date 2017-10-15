@@ -1,10 +1,10 @@
 # SilverStripe Elemental Virtual
 
-[![Build Status](http://img.shields.io/travis/ddnadesign/silverstripe-elemental-virtual.svg?style=flat-square)](https://travis-ci.org/dnadesign/silverstripe-elemental)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/dnadesign/silverstripe-elemental-virtual/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/dnadesign/silverstripe-elemental-virtual/?branch=master)
-[![codecov](https://codecov.io/gh/dnadesign/silverstripe-elemental-virtual/branch/master/graph/badge.svg)](https://codecov.io/gh/dnadesign/silverstripe-elemental)
-[![Version](http://img.shields.io/packagist/v/dnadesign/silverstripe-elemental-virtual.svg?style=flat-square)](https://packagist.org/packages/dnadesign/silverstripe-elemental)
-[![License](http://img.shields.io/packagist/l/dnadesign/silverstripe-elemental-virtual.svg?style=flat-square)](LICENSE.md)
+[![Build Status](http://img.shields.io/travis/silverstripe/silverstripe-elemental-virtual.svg?style=flat-square)](https://travis-ci.org/silverstripe/silverstripe-elemental)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/silverstripe/silverstripe-elemental-virtual/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/silverstripe/silverstripe-elemental-virtual/?branch=master)
+[![codecov](https://codecov.io/gh/silverstripe/silverstripe-elemental-virtual/branch/master/graph/badge.svg)](https://codecov.io/gh/silverstripe/silverstripe-elemental)
+[![Version](http://img.shields.io/packagist/v/silverstripe/silverstripe-elemental-virtual.svg?style=flat-square)](https://packagist.org/packages/silverstripe/silverstripe-elemental)
+[![License](http://img.shields.io/packagist/l/silverstripe/silverstripe-elemental-virtual.svg?style=flat-square)](LICENSE.md)
 
 ## Introduction
 
@@ -14,5 +14,5 @@ linked to multiple pages.
 ## Installation
 
 ```
-composer require "dnadesign/silverstripe-elemental-virtual" "dev-master"
+composer require "silverstripe/elemental-virtual" "dev-master"
 ```

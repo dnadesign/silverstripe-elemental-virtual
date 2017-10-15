@@ -1,6 +1,6 @@
 <?php
 
-namespace DNADesign\Elemental\Virtual\Tasks;
+namespace SilverStripe\Elemental\Virtual\Tasks;
 
 use SilverStripe\Dev\BuildTask;
 use SilverStripe\Core\ClassInfo;

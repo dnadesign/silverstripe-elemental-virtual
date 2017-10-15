@@ -1,5 +1,5 @@
 {
-    "name": "dnadesign/silverstripe-elemental-virtual",
+    "name": "silverstripe/elemental-virtual",
     "description": "Adds ability for Elemental to share content blocks between pages",
     "type": "silverstripe-vendormodule",
     "keywords": [
@@ -31,8 +31,8 @@
     },
     "autoload": {
         "psr-4": {
-            "DNADesign\\Elemental\\Virtual\\": "src/",
-            "DNADesign\\Elemental\\Virtual\\Tests\\": "tests/php/"
+            "SilverStripe\\Elemental\\Virtual\\": "src/",
+            "SilverStripe\\Elemental\\Virtual\\Tests\\": "tests/php/"
         }
     }
 }

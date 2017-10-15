@@ -1,12 +1,12 @@
 <?php
 
-namespace DNADesign\Elemental\Virtual\Extensions;
+namespace SilverStripe\Elemental\Virtual\Extensions;
 
 use SilverStripe\ORM\DataExtension;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Versioned\Versioned;
 
-use DNADesign\Elemental\Virtual\Model\ElementVirtual;
+use SilverStripe\Elemental\Virtual\Model\ElementVirtual;
 
 class BaseElementExtension extends DataExtension
 {
