@@ -10,11 +10,9 @@ use SilverStripe\ElementalVirtual\Model\ElementVirtual;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
 
-class BaseElementExtensionTests extends SapphireTest
+class BaseElementExtensionTest extends SapphireTest
 {
     protected static $fixture_file = 'BaseElementExtensionTest.yml';
-
-    protected static $use_draft_site = true;
 
     protected static $extra_dataobjects = [
         TestElement::class,
