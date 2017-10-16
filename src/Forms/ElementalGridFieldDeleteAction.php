@@ -1,6 +1,6 @@
 <?php
 
-namespace SilverStripe\Elemental\Virtual\Forms;
+namespace SilverStripe\ElementalVirtual\Forms;
 
 use SilverStripe\Forms\GridField\GridFieldDeleteAction;
 use SilverStripe\Forms\GridField\GridField_FormAction;

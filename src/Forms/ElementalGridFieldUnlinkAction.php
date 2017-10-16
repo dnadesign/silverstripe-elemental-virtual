@@ -1,10 +1,10 @@
 <?php
 
-namespace SilverStripe\Elemental\Virtual\Forms;
+namespace SilverStripe\ElementalVirtual\Forms;
 
 use SilverStripe\Forms\GridField\GridFieldDeleteAction;
 use SilverStripe\Forms\GridField\GridField_FormAction;
-use SilverStripe\Elemental\Virtual\Model\ElementVirtual;
+use SilverStripe\ElementalVirtual\Model\ElementVirtual;
 
 class ElementalGridFieldUnlinkAction extends GridFieldDeleteAction
 {

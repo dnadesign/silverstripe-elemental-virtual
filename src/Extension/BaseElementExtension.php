@@ -1,12 +1,18 @@
 <?php
 
-namespace SilverStripe\Elemental\Virtual\Extensions;
+namespace SilverStripe\ElementalVirtual\Extensions;
 
 use SilverStripe\ORM\DataExtension;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Versioned\Versioned;
-
-use SilverStripe\Elemental\Virtual\Model\ElementVirtual;
+use SilverStripe\Forms\LiteralField;
+use SilverStripe\Forms\GridField\GridFieldConfig_Base;
+use SilverStripe\Forms\GridField\GridFieldDataColumns;
+use SilverStripe\Forms\GridField\GridFieldAddNewButton;
+use SilverStripe\Forms\GridField\GridFieldAddExistingAutocompleter;
+use SilverStripe\Forms\GridField\GridFieldDetailForm;
+use SilverStripe\ElementalVirtual\Model\ElementVirtual;
+use SilverStripe\ElementalVirtual\Forms\ElementalGridFieldDeleteAction;
 
 class BaseElementExtension extends DataExtension
 {
@@ -95,7 +101,6 @@ class BaseElementExtension extends DataExtension
 
         if ($global) {
             $fields->removeByName('AvailableGlobally');
-
             $fields->addFieldToTab('Root.Settings', $global);
         }
 
@@ -229,9 +234,11 @@ class BaseElementExtension extends DataExtension
             }
         }
 
-        $linkedElements = ElementVirtualLinked::get()->filter('LinkedElementID', $this->ID);
+        $linkedElements = ElementVirtual::get()->filter('LinkedElementID', $this->ID);
+
         foreach ($linkedElements as $element) {
             $area = $element->Parent();
+
             if ($area instanceof ElementalArea && $page = $area->getOwnerPage()) {
                 $page->setField('ElementType', 'Linked');
                 $usage->push($page);

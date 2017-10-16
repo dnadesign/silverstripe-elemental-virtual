@@ -31,8 +31,8 @@
     },
     "autoload": {
         "psr-4": {
-            "SilverStripe\\Elemental\\Virtual\\": "src/",
-            "SilverStripe\\Elemental\\Virtual\\Tests\\": "tests/php/"
+            "SilverStripe\\ElementalVirtual\\": "src/",
+            "SilverStripe\\ElementalVirtual\\Tests\\": "tests/php/"
         }
     }
 }

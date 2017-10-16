@@ -1,8 +1,8 @@
 <?php
 
-namespace SilverStripe\Elemental\Virtual\Forms;
+namespace SilverStripe\ElementalVirtual\Forms;
 
-use SilverStripe\Elemental\Virtual\Models\ElementVirtual;
+use SilverStripe\ElementalVirtual\Models\ElementVirtual;
 
 use SilverStripe\Core\Convert;
 use SilverStripe\Forms\GridField\GridField;

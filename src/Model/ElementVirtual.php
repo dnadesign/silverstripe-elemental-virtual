@@ -1,6 +1,6 @@
 <?php
 
-namespace SilverStripe\Elemental\Virtual\Model;
+namespace SilverStripe\ElementalVirtual\Model;
 
 use DNADesign\Elemental\Models\BaseElement;
 use SilverStripe\Forms\FieldList;
@@ -76,6 +76,9 @@ class ElementVirtual extends BaseElement
         }
     }
 
+    /**
+     * @return string
+     */
     public function i18n_singular_name()
     {
         return _t(__CLASS__, $this->LinkedElement()->config()->title);
@@ -118,8 +121,10 @@ class ElementVirtual extends BaseElement
      */
     public function getType()
     {
-        return sprintf("%s (%s)",
-            $this->LinkedElement()->getType(), _t(__CLASS__ . '.virtual', 'Virtual')
+        return sprintf(
+            "%s (%s)",
+            $this->LinkedElement()->getType(),
+            _t(__CLASS__ . '.virtual', 'Virtual')
         );
     }
 
@@ -131,9 +136,9 @@ class ElementVirtual extends BaseElement
      */
     public function isInvalidPublishState()
     {
-        $element = $this->owner->LinkedElement();
+        $element = $this->LinkedElement();
 
-        return (!$element->isPublished() && $this->owner->isPublished());
+        return (!$element->isPublished() && $this->isPublished());
     }
 
     public function getCMSPublishedState()
@@ -172,7 +177,7 @@ class ElementVirtual extends BaseElement
      */
     public function getAnchor()
     {
-        $linkedElement = $this->owner->LinkedElement();
+        $linkedElement = $this->LinkedElement();
 
         if ($linkedElement && $linkedElement->exists()) {
             return $linkedElement->getAnchor();
@@ -186,7 +191,7 @@ class ElementVirtual extends BaseElement
      */
     public function getSummary()
     {
-        if ($linked = $this->owner->LinkedElement()) {
+        if ($linked = $this->LinkedElement()) {
             return $linked->getSummary();
         }
     }

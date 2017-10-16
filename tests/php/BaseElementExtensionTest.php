@@ -1,46 +1,44 @@
 <?php
 
-namespace SilverStripe\Elemental\Virtual\Tests;
+namespace SilverStripe\ElementalVirtual\Tests;
 
 use DNADesign\Elemental\Models\BaseElement;
 use DNADesign\Elemental\Models\ElementalArea;
-use SilverStripe\Elemental\Virtual\Model\ElementVirtual;
+use DNADesign\Elemental\Tests\Src\TestElement;
+use DNADesign\Elemental\Tests\Src\TestPage;
+use SilverStripe\ElementalVirtual\Model\ElementVirtual;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
 
 class BaseElementExtensionTests extends SapphireTest
 {
-    public function testAvailableGlobally()
-    {
+    protected static $fixture_file = 'BaseElementExtensionTest.yml';
 
-    }
+    protected static $use_draft_site = true;
+
+    protected static $extra_dataobjects = [
+        TestElement::class,
+        TestPage::class
+    ];
 
     public function testVirtualElementAnchor()
     {
-        $baseElement1 = BaseElement::create(array('Title' => 'Element 2', 'Sort' => 1));
-        $baseElement1->write();
-        $baseElement2 = BaseElement::create(array('Title' => 'Element 2', 'Sort' => 2));
-        $baseElement2->write();
-        $baseElement3 = BaseElement::create(array('Title' => 'Element 2', 'Sort' => 3));
-        $baseElement3->write();
-        $virtElement1 = ElementVirtual::create(array('LinkedElementID' => $baseElement2->ID));
-        $virtElement1->write();
-        $virtElement2 = ElementVirtual::create(array('LinkedElementID' => $baseElement3->ID));
-        $virtElement2->write();
+        Config::modify()->set(BaseElement::class, 'disable_pretty_anchor_name', true);
 
-        $area = ElementalArea::create();
-        $area->Widgets()->add($baseElement1);
-        $area->Widgets()->add($virtElement1);
-        $area->Widgets()->add($virtElement2);
-        $area->write();
+        $element = $this->objFromFixture(ElementVirtual::class, 'virtual1');
+        $linked = $this->objFromFixture(TestElement::class, 'element1');
 
-        $recordSet = $area->Elements()->toArray();
-        foreach ($recordSet as $record) {
-            $record->getAnchor();
-        }
+        $this->assertEquals('e'. $linked->ID, $element->getAnchor());
+    }
 
-        $this->assertEquals('element-2', $recordSet[0]->getAnchor());
-        $this->assertEquals('element-2-2', $recordSet[1]->getAnchor());
-        $this->assertEquals('element-2-3', $recordSet[2]->getAnchor());
+    public function testUpdateCmsFields()
+    {
+        $linked = $this->objFromFixture(TestElement::class, 'element1');
+
+        // should show that this element has virtual clones
+        $list = $linked->getCMSFields()->dataFieldByName('VirtualClones')->getList();
+
+        $this->assertEquals(1, $list->count());
+        $this->assertEquals('test-page', $list->First()->LinkedElement()->getPage()->URLSegment);
     }
 }

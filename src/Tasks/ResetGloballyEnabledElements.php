@@ -1,6 +1,6 @@
 <?php
 
-namespace SilverStripe\Elemental\Virtual\Tasks;
+namespace SilverStripe\ElementalVirtual\Tasks;
 
 use SilverStripe\Dev\BuildTask;
 use SilverStripe\Core\ClassInfo;
