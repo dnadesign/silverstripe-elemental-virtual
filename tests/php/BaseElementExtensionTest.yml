@@ -13,6 +13,6 @@ DNADesign\Elemental\Tests\Src\TestElement:
     Title: Element 1
     ParentID: =>DNADesign\Elemental\Models\ElementalArea.area1
 
-SilverStripe\ElementalVirtual\Model\ElementVirtual:
+DNADesign\ElementalVirtual\Model\ElementVirtual:
   virtual1:
     LinkedElementID: =>DNADesign\Elemental\Tests\Src\TestElement.element1

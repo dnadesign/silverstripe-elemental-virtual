@@ -1,6 +1,6 @@
 <?php
 
-namespace SilverStripe\ElementalVirtual\Control;
+namespace DNADesign\ElementalVirtual\Control;
 
 use DNADesign\Elemental\Controllers\ElementController;
 use Exception;
