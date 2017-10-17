@@ -1,13 +1,13 @@
 <?php
 
-namespace SilverStripe\ElementalVirtual\Extensions;
+namespace DNADesign\ElementalVirtual\Extensions;
 
-use SilverStripe\ORM\DataExtension;
 use DNADesign\Elemental\Models\BaseElement;
+use DNADesign\ElementalVirtual\Forms\ElementalGridFieldAddExistingAutocompleter;
+use DNADesign\ElementalVirtual\Forms\ElementalGridFieldDeleteAction;
+use DNADesign\ElementalVirtual\Model\ElementVirtual;
 use SilverStripe\Forms\GridField\GridFieldDeleteAction;
-use SilverStripe\ElementalVirtual\Forms\ElementalGridFieldAddExistingAutocompleter;
-use SilverStripe\ElementalVirtual\Forms\ElementalGridFieldDeleteAction;
-use SilverStripe\ElementalVirtual\Model\ElementVirtual;
+use SilverStripe\ORM\DataExtension;
 
 class ElementalEditorExtension extends DataExtension
 {

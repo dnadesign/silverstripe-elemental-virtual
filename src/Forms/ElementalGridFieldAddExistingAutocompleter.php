@@ -1,9 +1,8 @@
 <?php
 
-namespace SilverStripe\ElementalVirtual\Forms;
+namespace DNADesign\ElementalVirtual\Forms;
 
-use SilverStripe\ElementalVirtual\Models\ElementVirtual;
-
+use DNADesign\ElementalVirtual\Models\ElementVirtual;
 use SilverStripe\Core\Convert;
 use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\Forms\GridField\GridFieldAddExistingAutocompleter;

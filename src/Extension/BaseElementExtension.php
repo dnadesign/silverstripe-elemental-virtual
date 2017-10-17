@@ -1,7 +1,9 @@
 <?php
 
-namespace SilverStripe\ElementalVirtual\Extensions;
+namespace DNADesign\ElementalVirtual\Extensions;
 
+use DNADesign\ElementalVirtual\Forms\ElementalGridFieldDeleteAction;
+use DNADesign\ElementalVirtual\Model\ElementVirtual;
 use SilverStripe\ORM\DataExtension;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Versioned\Versioned;
@@ -11,8 +13,6 @@ use SilverStripe\Forms\GridField\GridFieldDataColumns;
 use SilverStripe\Forms\GridField\GridFieldAddNewButton;
 use SilverStripe\Forms\GridField\GridFieldAddExistingAutocompleter;
 use SilverStripe\Forms\GridField\GridFieldDetailForm;
-use SilverStripe\ElementalVirtual\Model\ElementVirtual;
-use SilverStripe\ElementalVirtual\Forms\ElementalGridFieldDeleteAction;
 
 class BaseElementExtension extends DataExtension
 {

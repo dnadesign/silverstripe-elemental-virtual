@@ -1,12 +1,12 @@
 <?php
 
-namespace SilverStripe\ElementalVirtual\Tasks;
+namespace DNADesign\ElementalVirtual\Tasks;
 
+use DNADesign\Elemental\Models\BaseElement;
 use SilverStripe\Dev\BuildTask;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Core\Config;
 use SilverStripe\ORM\DB;
-use DNADesign\Elemental\Models\BaseElement;
 
 class ResetGloballyEnabledElements extends BuildTask
 {
