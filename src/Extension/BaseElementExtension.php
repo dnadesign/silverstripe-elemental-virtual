@@ -42,9 +42,6 @@ class BaseElementExtension extends DataExtension
         'VirtualClones' => ElementVirtual::class
     ];
 
-    /**
-     *
-     */
     public function populateDefaults()
     {
         $this->AvailableGlobally = $this->owner->config()->get('default_global_elements');
@@ -58,6 +55,7 @@ class BaseElementExtension extends DataExtension
     public function setVirtualOwner(ElementVirtual $owner)
     {
         $this->virtualOwner = $owner;
+        return $this;
     }
 
     /**
@@ -91,7 +89,7 @@ class BaseElementExtension extends DataExtension
     }
 
     /**
-     * @param FieldList
+     * @param FieldList $fields
      *
      * @return FieldList
      */
@@ -107,15 +105,17 @@ class BaseElementExtension extends DataExtension
         if ($virtual = $fields->dataFieldByName('VirtualClones')) {
             if ($this->owner->VirtualClones()->Count() > 0) {
                 $tab = $fields->findOrMakeTab('Root.VirtualClones');
-                $tab->setTitle(_t('BaseElement.VIRTUALTABTITLE', 'Linked To'));
+                $tab->setTitle(_t(__CLASS__ . '.LinkedTo', 'Linked To'));
 
                 if ($ownerPage = $this->owner->getPage()) {
                     $fields->addFieldToTab(
                         'Root.VirtualClones',
-                        new LiteralField(
+                        LiteralField::create(
                             'DisplaysOnPage',
                             sprintf(
-                                "<p>The original content element appears on <a href='%s'>%s</a></p>",
+                                "<p>"
+                                . _t(__CLASS__ . '.OriginalContentFrom', 'The original content element appears on')
+                                . " <a href='%s'>%s</a></p>",
                                 ($ownerPage->hasMethod('CMSEditLink') && $ownerPage->canEdit()) ? $ownerPage->CMSEditLink() : $ownerPage->Link(),
                                 $ownerPage->MenuTitle
                             )
@@ -126,7 +126,7 @@ class BaseElementExtension extends DataExtension
 
                 $virtual->setConfig(new GridFieldConfig_Base());
                 $virtual
-                    ->setTitle(_t('BaseElement.OTHERPAGES', 'Other pages'))
+                    ->setTitle(_t(__CLASS__ . '.OtherPages', 'Other pages'))
                     ->getConfig()
                         ->removeComponentsByType(GridFieldAddExistingAutocompleter::class)
                         ->removeComponentsByType(GridFieldAddNewButton::class)
@@ -136,10 +136,10 @@ class BaseElementExtension extends DataExtension
 
                 $virtual->getConfig()
                     ->getComponentByType(GridFieldDataColumns::class)
-                    ->setDisplayFields(array(
-                        'getPage.Title' => 'Title',
-                        'ParentCMSEditLink' => 'Used on'
-                    ));
+                    ->setDisplayFields([
+                        'getPage.Title' => _t(__CLASS__ . '.GridFieldTitle', 'Title'),
+                        'ParentCMSEditLink' => _t(__CLASS__ . '.GridFieldUsedOn', 'Used on'),
+                    ]);
             } else {
                 $fields->removeByName('VirtualClones');
             }

@@ -2,6 +2,7 @@
 
 namespace DNADesign\ElementalVirtual\Model;
 
+use SilverStripe\ElementalVirtual\Forms\ElementalGridFieldAddExistingAutocompleter;
 use DNADesign\Elemental\Models\BaseElement;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\LiteralField;
@@ -20,14 +21,8 @@ use SilverStripe\ORM\FieldType\DBHTMLText;
  */
 class ElementVirtual extends BaseElement
 {
-    /**
-     * @var string
-     */
     private static $icon = 'dnadesign/silverstripe-elemental-virtual:images/virtual.svg';
 
-    /**
-     * @var array
-     */
     private static $has_one = [
         'LinkedElement' => BaseElement::class
     ];
@@ -37,20 +32,9 @@ class ElementVirtual extends BaseElement
      */
     private static $description = 'Reused element';
 
-    /**
-     * @var string
-     */
     private static $table_name = 'ElementVirtual';
 
-    /**
-     * @var string
-     */
-    private static $title = 'Virtual Element';
-
-    /**
-     * @var string
-     */
-    private static $singular_name = 'Virtual Element';
+    private static $singular_name = 'virtual block';
 
     /**
      * @param BaseElement
@@ -62,26 +46,6 @@ class ElementVirtual extends BaseElement
         parent::__construct($record, $isSingleton, $model);
 
         $this->LinkedElement()->setVirtualOwner($this);
-    }
-
-    /**
-     * @return string
-     */
-    public function getTitle()
-    {
-        if ($el = $this->LinkedElement()) {
-            return $el->getTitle();
-        } else {
-            return _t(__CLASS__, $this->config()->title);
-        }
-    }
-
-    /**
-     * @return string
-     */
-    public function i18n_singular_name()
-    {
-        return _t(__CLASS__, $this->LinkedElement()->config()->title);
     }
 
     /**
@@ -97,19 +61,22 @@ class ElementVirtual extends BaseElement
     {
         $message = sprintf(
             '<p>%s</p><p><a href="%2$s">Click here to edit the original</a></p>',
-            _t('ElementVirtualLinked.DESCRIBE', 'This is a virtual copy of an element.'),
+            _t(__CLASS__ . '.VirtualDescription', 'This is a virtual copy of an element.'),
             $this->LinkedElement()->getEditLink()
         );
 
-        $fields = new FieldList(
-            new TabSet('Root', $main = new Tab('Main'))
+        $fields = FieldList::create(
+            TabSet::create('Root', $main = Tab::create('Main'))
         );
 
         if ($this->isInvalidPublishState()) {
-            $warning = 'Error: The original element is not published. This element will not work on the live site until you click the link below and publish it.';
-            $main->push(new LiteralField('WarningHeader', '<p class="message error">' .$warning. '</p>'));
+            $warning = _t(
+                __CLASS__ . '.InvalidPublishStateWarning',
+                'Error: The original element is not published. This element will not work on the live site until you click the link below and publish it.'
+            );
+            $main->push(LiteralField::create('WarningHeader', '<p class="message error">' . $warning . '</p>'));
         }
-        $main->push(new LiteralField('Existing', $message));
+        $main->push(LiteralField::create('Existing', $message));
 
         $this->extend('updateCMSFields', $fields);
 
@@ -124,7 +91,7 @@ class ElementVirtual extends BaseElement
         return sprintf(
             "%s (%s)",
             $this->LinkedElement()->getType(),
-            _t(__CLASS__ . '.virtual', 'Virtual')
+            _t(__CLASS__ . '.BlockType', 'Virtual')
         );
     }
 
@@ -145,8 +112,8 @@ class ElementVirtual extends BaseElement
     {
         if ($this->isInvalidPublishState()) {
             $colour = '#C00';
-            $text = 'Error';
-            $html = new DBHTMLText('PublishedState');
+            $text = _t(__CLASS__ . '.InvalidPublishStateError', 'Error');
+            $html = DBHTMLText::create('PublishedState');
             $html->setValue(sprintf(
                 '<span style="color: %s;">%s</span>',
                 $colour,
@@ -157,7 +124,7 @@ class ElementVirtual extends BaseElement
 
         $publishedState = null;
 
-        foreach ($this->extension_instances as $instance) {
+        foreach ($this->getExtensionInstances() as $instance) {
             if (method_exists($instance, 'getCMSPublishedState')) {
                 $instance->setOwner($this);
                 $publishedState = $instance->getCMSPublishedState();
@@ -183,7 +150,7 @@ class ElementVirtual extends BaseElement
             return $linkedElement->getAnchor();
         }
 
-        return 'e'. $this->ID;
+        return 'e' . $this->ID;
     }
 
     /**

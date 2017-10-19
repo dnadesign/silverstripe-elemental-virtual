@@ -1,0 +1,19 @@
+en:
+  DNADesign\ElementalVirtual\Extensions\BaseElementExtension:
+    GridFieldTitle: Title
+    GridFieldUsedOn: 'Used on'
+    LinkedTo: 'Linked To'
+    OriginalContentFrom: 'The original content element appears on'
+    OtherPages: 'Other pages'
+  DNADesign\ElementalVirtual\Forms\ElementalGridFieldUnlinkAction:
+    UnlinkRelation: Unlink
+  DNADesign\ElementalVirtual\Model\ElementVirtual:
+    BlockType: Virtual
+    InvalidPublishStateError: Error
+    InvalidPublishStateWarning: 'Error: The original element is not published. This element will not work on the live site until you click the link below and publish it.'
+    PLURALNAME: blocks
+    PLURALS:
+      one: 'A virtual block'
+      other: '{count} blocks'
+    SINGULARNAME: 'virtual block'
+    VirtualDescription: 'This is a virtual copy of an element.'
