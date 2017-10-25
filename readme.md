@@ -14,5 +14,5 @@ linked to multiple pages.
 ## Installation
 
 ```
-composer require dnadesign/silverstripe-elemental-virtual 1.0.x-dev
+composer require dnadesign/silverstripe-elemental-virtual 1.x-dev
 ```
