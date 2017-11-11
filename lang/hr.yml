@@ -1,0 +1,19 @@
+hr:
+  DNADesign\ElementalVirtual\Extensions\BaseElementExtension:
+    GridFieldTitle: Naziv
+    GridFieldUsedOn: 'Korišten na'
+    LinkedTo: 'Povezan na'
+    OriginalContentFrom: 'Originalni sadržaj elementa pojavljuje se na'
+    OtherPages: 'Druge stranice'
+  DNADesign\ElementalVirtual\Forms\ElementalGridFieldUnlinkAction:
+    UnlinkRelation: Prekini vezu
+  DNADesign\ElementalVirtual\Model\ElementVirtual:
+    BlockType: Virtualni
+    InvalidPublishStateError: Greška
+    InvalidPublishStateWarning: 'Greška: originalni element nije obavljen. Ovaj element neće raditi na objavljenoj stranici dok ne kliknete na link ispod i objavite ga.'
+    PLURALNAME: blokovi
+    PLURALS:
+      one: 'virtualni blok'
+      other: '{count} blokova'
+    SINGULARNAME: 'virtualni blok'
+    VirtualDescription: 'Ovo je virtualna kopija elementa.'
