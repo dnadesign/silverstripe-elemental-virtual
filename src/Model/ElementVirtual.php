@@ -111,12 +111,12 @@ class ElementVirtual extends BaseElement
     public function getCMSPublishedState()
     {
         if ($this->isInvalidPublishState()) {
-            $color = '#C00';
+            $colour = '#C00';
             $text = _t(__CLASS__ . '.InvalidPublishStateError', 'Error');
             $html = DBHTMLText::create('PublishedState');
             $html->setValue(sprintf(
                 '<span style="color: %s;">%s</span>',
-                $color,
+                $colour,
                 htmlentities($text)
             ));
             return $html;
