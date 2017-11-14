@@ -2,7 +2,7 @@
 
 namespace DNADesign\ElementalVirtual\Forms;
 
-use DNADesign\ElementalVirtual\Models\ElementVirtual;
+use DNADesign\ElementalVirtual\Model\ElementVirtual;
 use SilverStripe\Core\Convert;
 use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\Forms\GridField\GridFieldAddExistingAutocompleter;
