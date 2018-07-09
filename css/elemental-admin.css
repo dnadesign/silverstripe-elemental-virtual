@@ -1,4 +1,3 @@
-
 .elemental-add-existing-autocompleter {
     max-width: 50%;
 }
@@ -28,3 +27,8 @@
     .cms table.ss-gridfield-table tr[data-class="ElementVirtual"] td {
         color: #999;
     }
+
+.elemental-preview__icon i.virtual-icon {
+    background: url("../images/virtual.svg") no-repeat center;
+    background-size: 100% auto;
+}
