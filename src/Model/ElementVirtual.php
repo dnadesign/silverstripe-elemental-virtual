@@ -21,7 +21,7 @@ use SilverStripe\ORM\FieldType\DBHTMLText;
  */
 class ElementVirtual extends BaseElement
 {
-    private static $icon = 'dnadesign/silverstripe-elemental-virtual:images/virtual.svg';
+    private static $icon = 'virtual-icon';
 
     private static $has_one = [
         'LinkedElement' => BaseElement::class
