@@ -162,4 +162,17 @@ class ElementVirtual extends BaseElement
             return $linked->getSummary();
         }
     }
+    
+    /**
+     * Override to render template based on LinkedElement
+     *
+     * @return string|null HTML
+     */
+    public function forTemplate($holder = true)
+    {
+        if ($linked = $this->LinkedElement()) {
+            return $linked->forTemplate($holder);
+        }
+        return null;
+    }
 }
