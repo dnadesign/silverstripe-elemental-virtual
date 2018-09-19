@@ -168,10 +168,8 @@ class BaseElementExtension extends DataExtension
                 $wasPublished = false;
             }
             if ($firstVirtual) {
-                $origParentID = $this->ParentID;
-                $origSort = $this->Sort;
 
-                $clone = $this->duplicate(false);
+                $clone = $this->owner->duplicate(false);
 
                 // set clones values to first virtual's values
                 $clone->ParentID = $firstVirtual->ParentID;
