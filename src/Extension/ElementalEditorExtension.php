@@ -15,10 +15,13 @@ class ElementalEditorExtension extends DataExtension
     {
         $searchList = BaseElement::get()->filter('AvailableGlobally', 1);
 
+        /** I added "true" in line 24 below so an element can be unlinked from its current location instead of deleted
+        * so it is available to be re-linked in a new location **/
+        
         $gridField->getConfig()
             ->removeComponentsByType(GridFieldDeleteAction::class)
             ->addComponent($autocomplete = new ElementalGridFieldAddExistingAutocompleter('toolbar-header-right'))
-            ->addComponent(new ElementalGridFieldDeleteAction());
+            ->addComponent(new ElementalGridFieldDeleteAction(true));
 
         $autocomplete->setSearchList($searchList);
         $autocomplete->setResultsFormat('($ID) $Title');
