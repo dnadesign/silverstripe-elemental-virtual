@@ -35,6 +35,11 @@ class BaseElementExtension extends DataExtension
         'AvailableGlobally' => 'Boolean(1)'
     ];
 
+    /** I added this part to make all newly created elements 'AvailableGlobally' by default **/
+    private static $defaults [
+        'AvailableGlobally' => 1
+    ];
+    
     /**
      * @var array $has_many
      */
