@@ -34,6 +34,11 @@ class BaseElementExtension extends DataExtension
     private static $db = [
         'AvailableGlobally' => 'Boolean(1)'
     ];
+    
+    /* make created elements available globally by default */
+    private static $defaults = [
+        'AvailableGlobally' => 1
+    ];
 
     /**
      * @var array $has_many
