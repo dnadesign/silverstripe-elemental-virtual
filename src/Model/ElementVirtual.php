@@ -60,9 +60,10 @@ class ElementVirtual extends BaseElement
     public function getCMSFields()
     {
         $message = sprintf(
-            '<p>%s</p><p><a href="%2$s">Click here to edit the original</a></p>',
+            '<p>%s</p><p><a href="%2$s" target="_blank" rel="noopener noreferrer">%s</a></p>',
             _t(__CLASS__ . '.VirtualDescription', 'This is a virtual copy of an element.'),
-            $this->LinkedElement()->getEditLink()
+            $this->LinkedElement()->getEditLink(),
+            _t(__CLASS__ . '.VirtualLinkTitle', 'Click here to edit the original')
         );
 
         $fields = FieldList::create(
