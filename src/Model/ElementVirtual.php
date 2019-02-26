@@ -22,7 +22,7 @@ use SilverStripe\ORM\FieldType\DBHTMLText;
  */
 class ElementVirtual extends BaseElement
 {
-    private static $icon = 'dnadesign/silverstripe-elemental-virtual:images/virtual.svg';
+    private static $icon = 'element-icon-virtual';
 
     private static $has_one = [
         'LinkedElement' => BaseElement::class
@@ -97,9 +97,7 @@ class ElementVirtual extends BaseElement
     public function getType()
     {
         return sprintf(
-            "%s (%s)",
-            $this->LinkedElement()->getType(),
-            _t(__CLASS__ . '.BlockType', 'Virtual')
+            _t(__CLASS__ . '.BlockType', 'Virtual Block')
         );
     }
 
@@ -139,6 +137,16 @@ class ElementVirtual extends BaseElement
     {
         if ($linked = $this->LinkedElement()) {
             return $linked->getSummary();
+        }
+    }
+
+    /**
+     * @return string
+     */
+    public function getTitle()
+    {
+        if ($linked = $this->LinkedElement()) {
+            return $linked->Title;
         }
     }
 

@@ -28,3 +28,18 @@
     .cms table.ss-gridfield-table tr[data-class="ElementVirtual"] td {
         color: #999;
     }
+
+button.element-icon-virtual:before {
+    background: url("../images/virtual.svg") no-repeat center;
+    background-size: 100% auto;
+    width: 28px;
+    height: 32px;
+}
+
+.element-editor-header__icon-container .element-icon-virtual {
+    width: 27.3px;
+    height: 30px;
+    display: block;
+    background: url("../images/virtual.svg") no-repeat center;
+    background-size: 100% auto;
+}
