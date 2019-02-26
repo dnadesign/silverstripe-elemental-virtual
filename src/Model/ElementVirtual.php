@@ -2,6 +2,7 @@
 
 namespace DNADesign\ElementalVirtual\Model;
 
+use TractorCow\AutoComplete\AutoCompleteField;
 use SilverStripe\ElementalVirtual\Forms\ElementalGridFieldAddExistingAutocompleter;
 use DNADesign\Elemental\Models\BaseElement;
 use SilverStripe\Forms\FieldList;
@@ -48,39 +49,46 @@ class ElementVirtual extends BaseElement
         $this->LinkedElement()->setVirtualOwner($this);
     }
 
-    /**
-     * Block should not appear in the create list
-     *
-     */
-    public function canCreateElemental()
-    {
-        return false;
-    }
-
     public function getCMSFields()
     {
-        $message = sprintf(
-            '<p>%s</p><p><a href="%2$s">Click here to edit the original</a></p>',
-            _t(__CLASS__ . '.VirtualDescription', 'This is a virtual copy of an element.'),
-            $this->LinkedElement()->getEditLink()
-        );
+        $invalid = $this->isInvalidPublishState();
 
-        $fields = FieldList::create(
-            TabSet::create('Root', $main = Tab::create('Main'))
-        );
+        $this->beforeUpdateCMSFields(function (FieldList $fields) use ($invalid) {
+            $fields->removeByName('Title');
 
-        if ($this->isInvalidPublishState()) {
-            $warning = _t(
-                __CLASS__ . '.InvalidPublishStateWarning',
-                'Error: The original element is not published. This element will not work on the live site until you click the link below and publish it.'
+            $message = sprintf(
+                '<p>%s</p><p><a href="%2$s" target="_blank">Click here to edit the original</a></p>',
+                _t(__CLASS__ . '.VirtualDescription', 'This is a virtual copy of an element.'),
+                $this->LinkedElement()->getEditLink()
             );
-            $main->push(LiteralField::create('WarningHeader', '<p class="message error">' . $warning . '</p>'));
-        }
-        $main->push(LiteralField::create('Existing', $message));
 
-        $this->extend('updateCMSFields', $fields);
+            if ($invalid) {
+                $warning = _t(
+                    __CLASS__ . '.InvalidPublishStateWarning',
+                    'Error: The original element is not published. This element will not work on the live site until you click the link below and publish it.'
+                );
 
-        return $fields;
+                $fields->addFieldToTab('Root.Main', LiteralField::create('WarningHeader', '<p class="message error">' . $warning . '</p>'));
+            }
+
+            $autocomplete = AutoCompleteField::create(
+                'LinkedElementID',
+                _t(__CLASS__ . '.LinkedElement', 'Linked Element'),
+                '',
+                BaseElement::class,
+                'Title'
+            );
+
+            $autocomplete->setLabelField('VirtualLinkedSummary');
+
+            $fields->replaceField(
+                'LinkedElementID',
+                $autocomplete
+            );
+            $fields->addFieldToTab('Root.Main', LiteralField::create('Existing', $message));
+        });
+
+        return parent::getCMSFields();
     }
 
     /**
@@ -108,35 +116,6 @@ class ElementVirtual extends BaseElement
         return (!$element->isPublished() && $this->isPublished());
     }
 
-    public function getCMSPublishedState()
-    {
-        if ($this->isInvalidPublishState()) {
-            $colour = '#C00';
-            $text = _t(__CLASS__ . '.InvalidPublishStateError', 'Error');
-            $html = DBHTMLText::create('PublishedState');
-            $html->setValue(sprintf(
-                '<span style="color: %s;">%s</span>',
-                $colour,
-                htmlentities($text)
-            ));
-            return $html;
-        }
-
-        $publishedState = null;
-
-        foreach ($this->getExtensionInstances() as $instance) {
-            if (method_exists($instance, 'getCMSPublishedState')) {
-                $instance->setOwner($this);
-                $publishedState = $instance->getCMSPublishedState();
-                $instance->clearOwner();
-                break;
-            }
-        }
-
-        return $publishedState;
-    }
-
-
     /**
      * Get a unique anchor name.
      *
@@ -162,7 +141,7 @@ class ElementVirtual extends BaseElement
             return $linked->getSummary();
         }
     }
-    
+
     /**
      * Override to render template based on LinkedElement
      *
@@ -174,5 +153,20 @@ class ElementVirtual extends BaseElement
             return $linked->forTemplate($holder);
         }
         return null;
+    }
+
+    /**
+     *
+     */
+    public function inlineEditable()
+    {
+        return false;
+    }
+
+    protected function provideBlockSchema()
+    {
+        $blockSchema = parent::provideBlockSchema();
+        $blockSchema['content'] = $this->getSummary();
+        return $blockSchema;
     }
 }

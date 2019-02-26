@@ -5,9 +5,6 @@ After: 'elemental'
 DNADesign\Elemental\Models\BaseElement:
   extensions:
     - DNADesign\ElementalVirtual\Extensions\BaseElementExtension
-DNADesign\Elemental\ElementalEditor:
-  extensions:
-    - DNADesign\ElementalVirtual\Extensions\ElementalEditorExtension
 SilverStripe\Admin\LeftAndMain:
   extra_requirements_css:
     - 'dnadesign/silverstripe-elemental-virtual:css/elemental-admin.css'

@@ -13,6 +13,7 @@
     "prefer-stable": true,
     "require": {
         "dnadesign/silverstripe-elemental": ">=3",
+        "tractorcow/silverstripe-autocomplete": "^4",
         "silverstripe/vendor-plugin": "^1.0"
     },
     "require-dev": {
@@ -27,6 +28,12 @@
             "css",
             "images"
         ]
+    },
+    "scripts": {
+        "lint": "phpcs --extensions=php src/ tests/",
+        "syntax-check": "find src/ tests/ -type f -name '*.php' -exec php -l {} \\;",
+        "lint-clean": "phpcbf src/ tests/ --extensions=php",
+        "remove-uses": "php-cs-fixer fix src/ tests/ --rules=no_unused_imports"
     },
     "autoload": {
         "psr-4": {

@@ -44,7 +44,9 @@ class BaseElementExtension extends DataExtension
 
     public function populateDefaults()
     {
-        $this->AvailableGlobally = $this->owner->config()->get('default_global_elements');
+        $default = $this->owner->config()->get('default_global_elements');
+
+        $this->AvailableGlobally = $default;
     }
 
     /**
@@ -74,7 +76,17 @@ class BaseElementExtension extends DataExtension
      */
     public function getVirtualElements()
     {
-        return ElementVirtual::get()->filter('LinkedElementID', $this->owner->ID);
+        return ElementVirtual::get()->filter([
+            'LinkedElementID' => $this->owner->ID
+        ]);
+    }
+
+    /**
+     * @return string
+     */
+    public function VirtualLinkedSummary()
+    {
+        return sprintf('%s (%s #%s)', $this->Title, $this->Type(), $this->ID);
     }
 
     /**
@@ -82,7 +94,9 @@ class BaseElementExtension extends DataExtension
      */
     public function getPublishedVirtualElements()
     {
-        return ElementVirtual::get()->filter('LinkedElementID', $this->owner->ID)->setDataQueryParam([
+        return ElementVirtual::get()->filter([
+            'LinkedElementID' => $this->owner->ID
+        ])->setDataQueryParam([
             'Versioned.mode' => 'stage',
             'Versioned.stage' => 'Live'
         ]);
@@ -168,7 +182,6 @@ class BaseElementExtension extends DataExtension
                 $wasPublished = false;
             }
             if ($firstVirtual) {
-
                 $clone = $this->owner->duplicate(false);
 
                 // set clones values to first virtual's values
@@ -262,19 +275,5 @@ class BaseElementExtension extends DataExtension
         $html->setValue(implode('<br>', $arr));
 
         return $html;
-    }
-
-    /**
-     * @param DBHTMLVarchar
-     */
-    public function updateElementIcon($icon)
-    {
-        $linked = $this->owner->LinkedElement();
-
-        if ($linked) {
-            $linkedIcon = $linked->config()->get('icon');
-
-            $icon = DBField::create_field('HTMLVarchar', '<span class="el-icongroup"><img width="16px" src="' . Director::absoluteBaseURL() . $linkedIcon . '" alt="" /><img class="el-icon--virtual" width="16px" src="' . Director::absoluteBaseURL() . $icon . '" alt="" /></span>');
-        }
     }
 }
