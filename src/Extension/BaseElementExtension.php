@@ -84,9 +84,9 @@ class BaseElementExtension extends DataExtension
     /**
      * @return string
      */
-    public function VirtualLinkedSummary()
+    public function getVirtualLinkedSummary()
     {
-        return sprintf('%s (%s #%s)', $this->Title, $this->Type(), $this->ID);
+        return sprintf('%s (%s #%s)', $this->owner->Title, $this->owner->getType(), $this->owner->ID);
     }
 
     /**

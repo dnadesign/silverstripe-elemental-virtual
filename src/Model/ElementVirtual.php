@@ -80,6 +80,7 @@ class ElementVirtual extends BaseElement
             );
 
             $autocomplete->setLabelField('VirtualLinkedSummary');
+            $autocomplete->setDisplayField('VirtualLinkedSummary');
 
             $fields->replaceField(
                 'LinkedElementID',
