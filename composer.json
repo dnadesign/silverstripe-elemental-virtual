@@ -12,7 +12,7 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "dnadesign/silverstripe-elemental": ">=3",
+        "dnadesign/silverstripe-elemental": "^3 || ^4",
         "tractorcow/silverstripe-autocomplete": "^4",
         "silverstripe/vendor-plugin": "^1.0"
     },
