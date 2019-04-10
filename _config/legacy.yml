@@ -1,0 +1,3 @@
+SilverStripe\ORM\DatabaseAdmin:
+  classname_value_remapping:
+    ElementVirtualLinked: 'DNADesign\ElementalVirtual\Model\ElementVirtual'
