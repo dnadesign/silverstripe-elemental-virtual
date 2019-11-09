@@ -22,7 +22,7 @@ use SilverStripe\ORM\FieldType\DBHTMLText;
  */
 class ElementVirtual extends BaseElement
 {
-    private static $icon = 'element-icon-virtual';
+    private static $icon = 'font-icon-block-link';
 
     private static $has_one = [
         'LinkedElement' => BaseElement::class
