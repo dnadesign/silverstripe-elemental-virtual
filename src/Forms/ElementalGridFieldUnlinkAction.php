@@ -17,10 +17,10 @@ class ElementalGridFieldUnlinkAction extends GridFieldDeleteAction
         if (!$record instanceof ElementVirtual) {
             $field = GridField_FormAction::create(
                 $gridField,
-                'UnlinkRelation'.$record->ID,
+                'UnlinkRelation' . $record->ID,
                 false,
                 'unlinkrelation',
-                array('RecordID' => $record->ID)
+                ['RecordID' => $record->ID]
             )
                 ->addExtraClass('gridfield-button-unlink')
                 ->setAttribute('title', _t(__CLASS__ . '.UnlinkRelation', 'Unlink'))

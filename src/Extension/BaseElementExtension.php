@@ -266,7 +266,7 @@ class BaseElementExtension extends DataExtension
     public function UsageSummary()
     {
         $usage = $this->getUsage();
-        $arr = array();
+        $arr = [];
         foreach ($usage as $page) {
             $type = ($page->ElementType) ? sprintf("<em> - %s</em>", $page->ElementType) : null;
             $arr[] = sprintf("<a href=\"%s\" target=\"blank\">%s</a> %s", $page->CMSEditLink(), $page->Title, $type);
