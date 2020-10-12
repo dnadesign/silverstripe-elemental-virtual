@@ -13,6 +13,9 @@ use SilverStripe\Forms\GridField\GridFieldDataColumns;
 use SilverStripe\Forms\GridField\GridFieldAddNewButton;
 use SilverStripe\Forms\GridField\GridFieldAddExistingAutocompleter;
 use SilverStripe\Forms\GridField\GridFieldDetailForm;
+use DNADesign\Elemental\Models\ElementalArea;
+use SilverStripe\ORM\FieldType\DBHTMLText;
+use SilverStripe\ORM\ArrayList;
 
 class BaseElementExtension extends DataExtension
 {
@@ -152,7 +155,7 @@ class BaseElementExtension extends DataExtension
                     ->getComponentByType(GridFieldDataColumns::class)
                     ->setDisplayFields([
                         'getPage.Title' => _t(__CLASS__ . '.GridFieldTitle', 'Title'),
-                        'ParentCMSEditLink' => _t(__CLASS__ . '.GridFieldUsedOn', 'Used on'),
+                        'ParentPageCMSEditLink' => _t(__CLASS__ . '.GridFieldUsedOn', 'Used on'),
                     ]);
             } else {
                 $fields->removeByName('VirtualClones');
@@ -161,58 +164,14 @@ class BaseElementExtension extends DataExtension
     }
 
     /**
-     * Ensure that if there are elements that are virtualised from this element
-     * that we move the original element to replace one of the virtual elements
+     * Client specific requirement https://mbiessd.atlassian.net/browse/MWP-390
+     * Delete all references of this Virtual element
      *
-     * But only if it's a delete not an unpublish
      */
     public function onBeforeDelete()
     {
-        if (Versioned::get_reading_mode() == 'Stage.Stage') {
-            $firstVirtual = false;
-            $allVirtual = $this->getVirtualElements();
-
-            if ($this->getPublishedVirtualElements()->Count() > 0) {
-                // choose the first one
-                $firstVirtual = $this->getPublishedVirtualElements()->First();
-                $wasPublished = true;
-            } elseif ($allVirtual->Count() > 0) {
-                // choose the first one
-                $firstVirtual = $this->getVirtualElements()->First();
-                $wasPublished = false;
-            }
-            if ($firstVirtual) {
-                $clone = $this->owner->duplicate(false);
-
-                // set clones values to first virtual's values
-                $clone->ParentID = $firstVirtual->ParentID;
-                $clone->Sort = $firstVirtual->Sort;
-
-                $clone->write();
-                if ($wasPublished) {
-                    $clone->doPublish();
-                    $firstVirtual->doUnpublish();
-                }
-
-                // clone has a new ID, so need to repoint
-                // all the other virtual elements
-                foreach ($allVirtual as $virtual) {
-                    if ($virtual->ID == $firstVirtual->ID) {
-                        continue;
-                    }
-                    $pub = false;
-                    if ($virtual->isPublished()) {
-                        $pub = true;
-                    }
-                    $virtual->LinkedElementID = $clone->ID;
-                    $virtual->write();
-                    if ($pub) {
-                        $virtual->doPublish();
-                    }
-                }
-
-                $firstVirtual->delete();
-            }
+        foreach ($this->getVirtualElements() as $virtualElement) {
+            $virtualElement->delete();
         }
     }
 
@@ -236,7 +195,7 @@ class BaseElementExtension extends DataExtension
     {
         $usage = new ArrayList();
 
-        if ($page = $this->getPage()) {
+        if ($page = $this->owner->getPage()) {
             $usage->push($page);
             if ($this->virtualOwner) {
                 $page->setField('ElementType', 'Linked');

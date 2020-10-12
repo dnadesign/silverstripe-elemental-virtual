@@ -178,4 +178,12 @@ class ElementVirtual extends BaseElement
         $blockSchema['content'] = $this->getSummary();
         return $blockSchema;
     }
+
+    public function getParentPageCMSEditLink() {
+        return DBField::create_field('HTMLText', sprintf(
+            '<a href="%s" target="_blank">%s</a>',
+            $this->getPage()->CMSEditLink(),
+            $this->getPage()->Title
+        ));
+    }
 }
