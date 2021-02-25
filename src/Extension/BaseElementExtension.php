@@ -2,17 +2,20 @@
 
 namespace DNADesign\ElementalVirtual\Extensions;
 
+use DNADesign\Elemental\Models\ElementalArea;
 use DNADesign\ElementalVirtual\Forms\ElementalGridFieldDeleteAction;
 use DNADesign\ElementalVirtual\Model\ElementVirtual;
-use SilverStripe\ORM\DataExtension;
 use SilverStripe\Forms\FieldList;
-use SilverStripe\Versioned\Versioned;
-use SilverStripe\Forms\LiteralField;
+use SilverStripe\Forms\GridField\GridFieldAddExistingAutocompleter;
+use SilverStripe\Forms\GridField\GridFieldAddNewButton;
 use SilverStripe\Forms\GridField\GridFieldConfig_Base;
 use SilverStripe\Forms\GridField\GridFieldDataColumns;
-use SilverStripe\Forms\GridField\GridFieldAddNewButton;
-use SilverStripe\Forms\GridField\GridFieldAddExistingAutocompleter;
 use SilverStripe\Forms\GridField\GridFieldDetailForm;
+use SilverStripe\Forms\LiteralField;
+use SilverStripe\ORM\ArrayList;
+use SilverStripe\ORM\DataExtension;
+use SilverStripe\ORM\FieldType\DBHTMLText;
+use SilverStripe\Versioned\Versioned;
 
 class BaseElementExtension extends DataExtension
 {
@@ -236,7 +239,7 @@ class BaseElementExtension extends DataExtension
     {
         $usage = new ArrayList();
 
-        if ($page = $this->getPage()) {
+        if ($page = $this->owner->getPage()) {
             $usage->push($page);
             if ($this->virtualOwner) {
                 $page->setField('ElementType', 'Linked');
@@ -245,7 +248,7 @@ class BaseElementExtension extends DataExtension
             }
         }
 
-        $linkedElements = ElementVirtual::get()->filter('LinkedElementID', $this->ID);
+        $linkedElements = ElementVirtual::get()->filter('LinkedElementID', $this->owner->ID);
 
         foreach ($linkedElements as $element) {
             $area = $element->Parent();

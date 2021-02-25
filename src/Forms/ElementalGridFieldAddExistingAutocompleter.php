@@ -40,7 +40,6 @@ class ElementalGridFieldAddExistingAutocompleter extends GridFieldAddExistingAut
      */
     public function getManipulatedData(GridField $gridField, SS_List $dataList)
     {
-
         if (!$gridField->State->GridFieldAddRelation) {
             return $dataList;
         }
@@ -48,7 +47,7 @@ class ElementalGridFieldAddExistingAutocompleter extends GridFieldAddExistingAut
         $objectID = Convert::raw2sql($gridField->State->GridFieldAddRelation);
 
         if ($objectID) {
-            $object = DataObject::get_by_id($dataList->dataclass(), $objectID);
+            $object = DataObject::get_by_id($gridField->getModelClass(), $objectID);
 
             if ($object) {
                 // if the object is currently not linked to either a page or another list then we want to link to
