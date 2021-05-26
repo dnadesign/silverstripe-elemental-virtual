@@ -10,10 +10,10 @@ sl:
   DNADesign\ElementalVirtual\Model\ElementVirtual:
     BlockType: 'Virtualni gradnik' 
     InvalidPublishStateError: Napaka
-    InvalidPublishStateWarning: 'Izvorni gradnik ni objavljen. Ta virtualni gradnik ne bo viden dokler ne objavite izvornega gradnika, ki je dostopen preko spodnje povezave.'
+    InvalidPublishStateWarning: 'Izvorni gradnik ni objavljen. Ta virtualni gradnik ne bo viden, dokler ne objavite izvornega gradnika, ki je dostopen preko spodnje povezave.'
     PLURALNAME: 'Virtualni gradniki'
     PLURALS:
-      one: 'Vritualni gradnik'
+      one: 'Virtualni gradnik'
       other: '{count} gradnikov'
     SINGULARNAME: 'Virtualni gradnik'
     VirtualDescription: 'To je virtualni gradnik, ki vsebino črpa iz izvornega gradnika.'
