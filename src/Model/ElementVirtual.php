@@ -81,6 +81,7 @@ class ElementVirtual extends BaseElement
 
             $autocomplete->setLabelField('VirtualLinkedSummary');
             $autocomplete->setDisplayField('VirtualLinkedSummary');
+            $autocomplete->setSourceFilter(['AvailableGlobally' => 1]);
 
             $fields->replaceField(
                 'LinkedElementID',
