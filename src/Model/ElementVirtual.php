@@ -36,6 +36,8 @@ class ElementVirtual extends BaseElement
     private static $table_name = 'ElementVirtual';
 
     private static $singular_name = 'virtual block';
+    
+    private static $inline_editable = false;
 
     /**
      * @param BaseElement
@@ -162,14 +164,6 @@ class ElementVirtual extends BaseElement
             return $linked->forTemplate($holder);
         }
         return null;
-    }
-
-    /**
-     *
-     */
-    public function inlineEditable()
-    {
-        return false;
     }
 
     protected function provideBlockSchema()
