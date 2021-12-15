@@ -56,12 +56,6 @@ class ElementVirtual extends BaseElement
         $this->beforeUpdateCMSFields(function (FieldList $fields) use ($invalid) {
             $fields->removeByName('Title');
 
-            $message = sprintf(
-                '<p>%s</p><p><a href="%2$s" target="_blank">Click here to edit the original</a></p>',
-                _t(__CLASS__ . '.VirtualDescription', 'This is a virtual copy of an element.'),
-                $this->LinkedElement()->getEditLink()
-            );
-
             if ($invalid) {
                 $warning = _t(
                     __CLASS__ . '.InvalidPublishStateWarning',
@@ -86,7 +80,15 @@ class ElementVirtual extends BaseElement
                 'LinkedElementID',
                 $autocomplete
             );
-            $fields->addFieldToTab('Root.Main', LiteralField::create('Existing', $message));
+            
+            if($this->LinkedElementID){
+                $message = sprintf(
+                    '<p>%s</p><p><a href="%2$s" target="_blank">Click here to edit the original</a></p>',
+                    _t(__CLASS__ . '.VirtualDescription', 'This is a virtual copy of an element.'),
+                    $this->LinkedElement()->getEditLink()
+                );
+                $fields->addFieldToTab('Root.Main', LiteralField::create('Existing', $message));
+            }
         });
 
         return parent::getCMSFields();
