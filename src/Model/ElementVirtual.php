@@ -37,7 +37,7 @@ class ElementVirtual extends BaseElement
 
     private static $singular_name = 'virtual block';
     
-    private static $inline_editable = false;
+    private static $inline_editable = true;
 
     /**
      * @param BaseElement
@@ -67,21 +67,13 @@ class ElementVirtual extends BaseElement
                 $fields->addFieldToTab('Root.Main', LiteralField::create('WarningHeader', '<p class="message error">' . $warning . '</p>'));
             }
 
-            $autocomplete = AutoCompleteField::create(
-                'LinkedElementID',
-                _t(__CLASS__ . '.LinkedElement', 'Linked Element'),
-                '',
-                BaseElement::class,
-                'Title'
-            );
-
-            $autocomplete->setLabelField('VirtualLinkedSummary');
-            $autocomplete->setDisplayField('VirtualLinkedSummary');
-            $autocomplete->setSourceFilter(['AvailableGlobally' => 1]);
-
+            $availableBlocks = BaseElement::get()->filter('AvailableGlobally', 1)->exclude('ClassName', get_class($this));
             $fields->replaceField(
                 'LinkedElementID',
-                $autocomplete
+                TagField::create("LinkedElementRelation", $this->fieldLabel('LinkedElement'), $availableBlocks)
+                    // Bug: TagField (react) setIsMultiple results in empty (https://github.com/silverstripe/silverstripe-tagfield/issues/195)
+    //                ->setIsMultiple(false)
+                    ->setCanCreate(false)
             );
             
             if($this->LinkedElementID){
@@ -95,6 +87,33 @@ class ElementVirtual extends BaseElement
         });
 
         return parent::getCMSFields();
+    }
+
+    /**
+     * Create an intermediary UnsavedRelationList to have TagField save the LinkedElement into
+     * @return UnsavedRelationList
+     */
+    public function LinkedElementRelation()
+    {
+        $this->LinkedElementRelation = UnsavedRelationList::create(
+            get_class($this),
+            'LinkedElementRelation',
+            BaseElement::class
+        );
+        $this->LinkedElementRelation->add($this->LinkedElementID);
+        return $this->LinkedElementRelation;
+    }
+
+    /**
+     * Transfer LinkedElement from UnsavedRelationList to has_one LinkedElementID
+     */
+    public function onBeforeWrite()
+    {
+        if($this->LinkedElementRelation && $this->LinkedElementRelation->first()){
+            $this->LinkedElementID = $this->LinkedElementRelation->first()->ID;
+        }
+        
+        return parent::onBeforeWrite();
     }
 
     /**
