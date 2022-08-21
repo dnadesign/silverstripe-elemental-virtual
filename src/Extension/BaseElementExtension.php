@@ -107,8 +107,6 @@ class BaseElementExtension extends DataExtension
 
     /**
      * @param FieldList $fields
-     *
-     * @return FieldList
      */
     public function updateCMSFields(FieldList $fields)
     {
