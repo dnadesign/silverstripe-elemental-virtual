@@ -8,6 +8,7 @@ use DNADesign\ElementalVirtual\Model\ElementVirtual;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\GridField\GridFieldAddExistingAutocompleter;
 use SilverStripe\Forms\GridField\GridFieldAddNewButton;
+use SilverStripe\Forms\GridField\GridFieldDeleteAction;
 use SilverStripe\Forms\GridField\GridFieldConfig_Base;
 use SilverStripe\Forms\GridField\GridFieldDataColumns;
 use SilverStripe\Forms\GridField\GridFieldDetailForm;
@@ -49,7 +50,7 @@ class BaseElementExtension extends DataExtension
     {
         $default = $this->owner->config()->get('default_global_elements');
 
-        $this->AvailableGlobally = $default;
+        $this->owner->AvailableGlobally = $default;
     }
 
     /**
@@ -107,8 +108,6 @@ class BaseElementExtension extends DataExtension
 
     /**
      * @param FieldList $fields
-     *
-     * @return FieldList
      */
     public function updateCMSFields(FieldList $fields)
     {
