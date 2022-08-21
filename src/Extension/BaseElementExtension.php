@@ -49,7 +49,7 @@ class BaseElementExtension extends DataExtension
     {
         $default = $this->owner->config()->get('default_global_elements');
 
-        $this->AvailableGlobally = $default;
+        $this->owner->AvailableGlobally = $default;
     }
 
     /**
