@@ -20,6 +20,9 @@ class BaseElementExtensionTest extends SapphireTest
         TestPage::class
     ];
 
+    /** @var TestPage */
+    protected $page;
+
     public function setUp(): void
     {
         parent::setUp();
@@ -30,7 +33,7 @@ class BaseElementExtensionTest extends SapphireTest
         $this->page->publishRecursive();
     }
 
-    public function testVirtualElementAnchor()
+    public function testVirtualElementAnchor(): void
     {
         Config::modify()->set(BaseElement::class, 'disable_pretty_anchor_name', true);
 
@@ -41,7 +44,7 @@ class BaseElementExtensionTest extends SapphireTest
     }
 
 
-    public function testRendersIntoHolder()
+    public function testRendersIntoHolder(): void
     {
         $element = $this->objFromFixture(ElementVirtual::class, 'virtual1');
         $linked = $this->objFromFixture(TestElement::class, 'element1');
@@ -53,7 +56,7 @@ class BaseElementExtensionTest extends SapphireTest
         $this->assertStringContainsString('element--test-element', $template);
     }
 
-    public function testUpdateCmsFields()
+    public function testUpdateCmsFields(): void
     {
         $linked = $this->objFromFixture(TestElement::class, 'element1');
 

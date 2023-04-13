@@ -3,3 +3,4 @@ composer.lock
 /resources/
 .phpunit.result.cache
 /assets
+/public
