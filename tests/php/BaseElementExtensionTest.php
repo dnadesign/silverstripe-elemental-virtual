@@ -19,7 +19,7 @@ class BaseElementExtensionTest extends SapphireTest
         TestPage::class
     ];
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

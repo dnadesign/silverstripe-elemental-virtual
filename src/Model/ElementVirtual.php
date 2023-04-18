@@ -2,23 +2,16 @@
 
 namespace DNADesign\ElementalVirtual\Model;
 
-use TractorCow\AutoComplete\AutoCompleteField;
-use SilverStripe\ElementalVirtual\Forms\ElementalGridFieldAddExistingAutocompleter;
 use DNADesign\Elemental\Models\BaseElement;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\LiteralField;
-use SilverStripe\Forms\Tab;
-use SilverStripe\Forms\TabSet;
-use SilverStripe\ORM\FieldType\DBField;
-use SilverStripe\ORM\FieldType\DBHTMLText;
+use SilverStripe\TagField\TagField;
 
 /**
  * Virtual Linked Element.
  *
  * As elemental is based on a natural has_one relation to an object,
  * this allows the same element to be linked to multiple pages.
- *
- * {@see ElementalGridFieldAddExistingAutocompleter}
  */
 class ElementVirtual extends BaseElement
 {
@@ -36,8 +29,8 @@ class ElementVirtual extends BaseElement
     private static $table_name = 'ElementVirtual';
 
     private static $singular_name = 'virtual block';
-    
-    private static $inline_editable = false;
+
+    private static $inline_editable = true;
 
     /**
      * @param BaseElement
@@ -67,29 +60,23 @@ class ElementVirtual extends BaseElement
                 $fields->addFieldToTab('Root.Main', LiteralField::create('WarningHeader', '<p class="message error">' . $warning . '</p>'));
             }
 
-            $autocomplete = AutoCompleteField::create(
-                'LinkedElementID',
-                _t(__CLASS__ . '.LinkedElement', 'Linked Element'),
-                '',
-                BaseElement::class,
-                'Title'
-            );
-
-            $autocomplete->setLabelField('VirtualLinkedSummary');
-            $autocomplete->setDisplayField('VirtualLinkedSummary');
-            $autocomplete->setSourceFilter(['AvailableGlobally' => 1]);
+            $availableBlocks = BaseElement::get()->filter('AvailableGlobally', 1)->exclude('ClassName', ElementVirtual::class);
 
             $fields->replaceField(
                 'LinkedElementID',
-                $autocomplete
+                TagField::create("LinkedElementID", $this->fieldLabel('LinkedElement'), $availableBlocks)
+                    ->setIsMultiple(false)
+                    ->setCanCreate(false)
+                    ->setShouldLazyLoad(true)
             );
-            
-            if($this->LinkedElementID){
+
+            if ($this->LinkedElementID) {
                 $message = sprintf(
                     '<p>%s</p><p><a href="%2$s" target="_blank">Click here to edit the original</a></p>',
                     _t(__CLASS__ . '.VirtualDescription', 'This is a virtual copy of an element.'),
                     $this->LinkedElement()->getEditLink()
                 );
+
                 $fields->addFieldToTab('Root.Main', LiteralField::create('Existing', $message));
             }
         });

@@ -1,0 +1,21 @@
+# Note: Currently chrome latest is recommended
+# Behat test setup requires an `.env` with `SS_BASE_URL` defined, as well
+# as each of the following commands to initiate a test run:
+# ========================================================================= #
+# composer require silverstripe/recipe-testing ^1
+# vendor/bin/behat-ss @<module>
+# ========================================================================= #
+default:
+  suites: []
+  extensions:
+    SilverStripe\BehatExtension\MinkExtension:
+      default_session: facebook_web_driver
+      javascript_session: facebook_web_driver
+      facebook_web_driver:
+        browser: chrome
+        wd_host: "http://127.0.0.1:9515" #chromedriver port
+      browser_name: chrome
+    SilverStripe\BehatExtension\Extension:
+      bootstrap_file: vendor/silverstripe/cms/tests/behat/serve-bootstrap.php
+      screenshot_path: %paths.base%/artifacts/screenshots
+      retry_seconds: 4 # default is 2
