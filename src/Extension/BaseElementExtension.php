@@ -21,11 +21,6 @@ use SilverStripe\Versioned\Versioned;
 class BaseElementExtension extends DataExtension
 {
     /**
-     * @var mixed
-     */
-    protected $virtualOwner;
-
-    /**
      * @config
      *
      * @var boolean
@@ -60,7 +55,7 @@ class BaseElementExtension extends DataExtension
      */
     public function setVirtualOwner(ElementVirtual $owner)
     {
-        $this->virtualOwner = $owner;
+        $this->owner->setField('_virtualOwner', $owner);
         return $this;
     }
 
@@ -69,7 +64,7 @@ class BaseElementExtension extends DataExtension
      */
     public function getVirtualOwner()
     {
-        return $this->virtualOwner;
+        return $this->owner->getField('_virtualOwner');
     }
 
     /**
@@ -240,7 +235,7 @@ class BaseElementExtension extends DataExtension
 
         if ($page = $this->owner->getPage()) {
             $usage->push($page);
-            if ($this->virtualOwner) {
+            if ($this->owner->getField('_virtualOwner')) {
                 $page->setField('ElementType', 'Linked');
             } else {
                 $page->setField('ElementType', 'Master');
