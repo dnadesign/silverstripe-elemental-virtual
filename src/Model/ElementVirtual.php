@@ -15,7 +15,7 @@ use SilverStripe\TagField\TagField;
  */
 class ElementVirtual extends BaseElement
 {
-    private static $icon = 'font-icon-block-link';
+    private static $icon = 'font-icon-block-virtual-page';
 
     private static $has_one = [
         'LinkedElement' => BaseElement::class
@@ -28,9 +28,11 @@ class ElementVirtual extends BaseElement
 
     private static $table_name = 'ElementVirtual';
 
-    private static $singular_name = 'virtual block';
+    private static $singular_name = 'Virtual block';
 
     private static $inline_editable = true;
+    
+    private static $controller_template = 'ElementHolder_VirtualLinked';
 
     /**
      * @param BaseElement
