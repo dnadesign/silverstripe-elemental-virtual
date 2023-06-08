@@ -6,6 +6,7 @@ use DNADesign\Elemental\Models\BaseElement;
 use DNADesign\Elemental\Models\ElementalArea;
 use DNADesign\Elemental\Tests\Src\TestElement;
 use DNADesign\Elemental\Tests\Src\TestPage;
+use DNADesign\ElementalVirtual\Control\ElementVirtualLinkedController;
 use DNADesign\ElementalVirtual\Model\ElementVirtual;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
@@ -37,6 +38,19 @@ class BaseElementExtensionTest extends SapphireTest
         $linked = $this->objFromFixture(TestElement::class, 'element1');
 
         $this->assertEquals('e' . $linked->ID, $element->getAnchor());
+    }
+
+
+    public function testRendersIntoHolder()
+    {
+        $element = $this->objFromFixture(ElementVirtual::class, 'virtual1');
+        $linked = $this->objFromFixture(TestElement::class, 'element1');
+
+        $controller = ElementVirtualLinkedController::create($element);
+
+        $template = $controller->forTemplate();
+
+        $this->assertStringContainsString('element--test-element', $template);
     }
 
     public function testUpdateCmsFields()

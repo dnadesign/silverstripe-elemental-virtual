@@ -7,17 +7,6 @@ use Exception;
 
 class ElementVirtualLinkedController extends ElementController
 {
-
-    /**
-     * Returns the current element in scope rendered into its' holder
-     *
-     * @return HTML
-     */
-    public function ElementHolder()
-    {
-        return $this->renderWith('ElementHolder_VirtualLinked');
-    }
-
     /**
      * @param string $action
      *
