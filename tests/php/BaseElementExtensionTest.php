@@ -3,10 +3,9 @@
 namespace DNADesign\ElementalVirtual\Tests;
 
 use DNADesign\Elemental\Models\BaseElement;
-use DNADesign\Elemental\Models\ElementalArea;
-use DNADesign\Elemental\Tests\Src\TestElement;
-use DNADesign\Elemental\Tests\Src\TestPage;
 use DNADesign\ElementalVirtual\Control\ElementVirtualLinkedController;
+use DNADesign\ElementalVirtual\Tests\Src\TestElement;
+use DNADesign\ElementalVirtual\Tests\Src\TestPage;
 use DNADesign\ElementalVirtual\Model\ElementVirtual;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
@@ -15,13 +14,13 @@ class BaseElementExtensionTest extends SapphireTest
 {
     protected static $fixture_file = 'BaseElementExtensionTest.yml';
 
+    /** @var TestPage */
+    protected $page;
+
     protected static $extra_dataobjects = [
         TestElement::class,
         TestPage::class
     ];
-
-    /** @var TestPage */
-    protected $page;
 
     public function setUp(): void
     {
@@ -47,7 +46,6 @@ class BaseElementExtensionTest extends SapphireTest
     public function testRendersIntoHolder(): void
     {
         $element = $this->objFromFixture(ElementVirtual::class, 'virtual1');
-        $linked = $this->objFromFixture(TestElement::class, 'element1');
 
         $controller = ElementVirtualLinkedController::create($element);
 

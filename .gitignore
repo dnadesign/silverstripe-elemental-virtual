@@ -1,6 +1,6 @@
 /vendor/
 composer.lock
 /resources/
-.phpunit.result.cache
 /assets
 /public
+.phpunit.result.cache
