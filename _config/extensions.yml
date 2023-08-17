@@ -1,10 +1,15 @@
 ---
 Name: elementalvirtual
-After: 'elemental'
+After: "elemental"
 ---
 DNADesign\Elemental\Models\BaseElement:
   extensions:
     - DNADesign\ElementalVirtual\Extensions\BaseElementExtension
 SilverStripe\Admin\LeftAndMain:
   extra_requirements_css:
-    - 'dnadesign/silverstripe-elemental-virtual:css/elemental-admin.css'
+    - "dnadesign/silverstripe-elemental-virtual:css/elemental-admin.css"
+SilverStripe\CMS\Controllers\ContentController:
+  extensions:
+    - DNADesign\ElementalVirtual\Extensions\VirtualElementalContentControllerExtension
+  url_handlers:
+    "element/$ID!": "handleElement"
