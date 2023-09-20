@@ -56,7 +56,11 @@ class BaseElementExtension extends DataExtension
 
     public function requireDefaultRecords()
     {
-        $update = BaseElement::get()->where('VirtualLookupTitle IS NULL AND AvailableGlobally = 1');
+        $update = BaseElement::get()->filter([
+            'VirtualLookupTitle' => [null, ''],
+            'AvailableGlobally' => 1
+        ]);
+
         $table = BaseElement::singleton()->baseTable();
 
         foreach ($update as $element) {
