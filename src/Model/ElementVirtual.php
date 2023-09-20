@@ -65,13 +65,22 @@ class ElementVirtual extends BaseElement
             if ($invalid) {
                 $warning = _t(
                     __CLASS__ . '.InvalidPublishStateWarning',
-                    'Error: The original element is not published. This element will not work on the live site until you click the link below and publish it.'
+                    'Error: The original element is not published. This element will not work on the live site until ' .
+                        'you click the link below and publish it.'
                 );
 
-                $fields->addFieldToTab('Root.Main', LiteralField::create('WarningHeader', '<p class="message error">' . $warning . '</p>'));
+                $fields->addFieldToTab(
+                    'Root.Main',
+                    LiteralField::create(
+                        'WarningHeader',
+                        '<p class="message error">' . $warning . '</p>'
+                    )
+                );
             }
 
-            $availableBlocks = BaseElement::get()->filter('AvailableGlobally', 1)->exclude('ClassName', ElementVirtual::class);
+            $availableBlocks = BaseElement::get()
+                ->filter('AvailableGlobally', 1)
+                ->exclude('ClassName', ElementVirtual::class);
 
             $fields->replaceField(
                 'LinkedElementID',

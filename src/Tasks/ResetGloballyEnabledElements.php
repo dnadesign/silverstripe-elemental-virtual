@@ -12,7 +12,7 @@ class ResetGloballyEnabledElements extends BuildTask
 {
     protected $title = 'Reset Globally Enabled elements';
 
-    protected $description = 'Reset individual elements \'AvailableGlobally\' setting with the default_global_elements config';
+    protected $description = 'Reset individual elements \'AvailableGlobally\' setting via the YAML config';
 
     public function run($request)
     {

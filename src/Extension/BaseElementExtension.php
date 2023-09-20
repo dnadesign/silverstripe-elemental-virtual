@@ -172,6 +172,12 @@ class BaseElementExtension extends DataExtension
                 $tab->setTitle(_t(__CLASS__ . '.LinkedTo', 'Linked To'));
 
                 if ($ownerPage = $this->owner->getPage()) {
+                    if ($ownerPage->hasMethod('CMSEditLink')) {
+                        $link = $ownerPage->canEdit() ? $ownerPage->CMSEditLink() : $ownerPage->Link();
+                    } else {
+                        $link = $ownerPage->Link();
+                    }
+
                     $fields->addFieldToTab(
                         'Root.VirtualClones',
                         LiteralField::create(
@@ -180,7 +186,7 @@ class BaseElementExtension extends DataExtension
                                 "<p>"
                                     . _t(__CLASS__ . '.OriginalContentFrom', 'The original content element appears on')
                                     . " <a href='%s'>%s</a></p>",
-                                ($ownerPage->hasMethod('CMSEditLink') && $ownerPage->canEdit()) ? $ownerPage->CMSEditLink() : $ownerPage->Link(),
+                                $link,
                                 $ownerPage->MenuTitle
                             )
                         ),
