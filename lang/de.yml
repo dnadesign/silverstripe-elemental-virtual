@@ -1,0 +1,19 @@
+de:
+  DNADesign\ElementalVirtual\Extensions\BaseElementExtension:
+    GridFieldTitle: Titel
+    GridFieldUsedOn: 'Verwendet auf'
+    LinkedTo: 'Verknüpft mit'
+    OriginalContentFrom: 'Das ursprüngliche Element erscheint auf'
+    OtherPages: 'Andere Seiten'
+  DNADesign\ElementalVirtual\Forms\ElementalGridFieldUnlinkAction:
+    UnlinkRelation: 'Verlinkung trennen'
+  DNADesign\ElementalVirtual\Model\ElementVirtual:
+    BlockType: Virtuell
+    InvalidPublishStateError: Fehler
+    InvalidPublishStateWarning: 'Fehler: Das ursprüngliche Element ist nicht veröffentlicht. Dieses Element wird auf der Live-Website nicht funktionieren, bis Sie auf den unten stehenden Link klicken und es veröffentlichen.'
+    PLURALNAME: Blöcke
+    PLURALS:
+      one: 'Ein virtueller Block'
+      other: '{count} Blöcke'
+    SINGULARNAME: 'virtueller Block'
+    VirtualDescription: 'Dies ist eine virtuelle Kopie eines Elements.'
