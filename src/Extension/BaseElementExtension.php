@@ -243,6 +243,7 @@ class BaseElementExtension extends DataExtension
                 $firstVirtual = $this->getVirtualElements()->First();
                 $wasPublished = false;
             }
+
             if ($firstVirtual) {
                 $clone = $this->owner->duplicate(false);
 
@@ -251,9 +252,11 @@ class BaseElementExtension extends DataExtension
                 $clone->Sort = $firstVirtual->Sort;
 
                 $clone->write();
+
                 if ($wasPublished) {
-                    $clone->doPublish();
-                    $firstVirtual->doUnpublish();
+                    $clone->publishRecursive();
+
+                    $firstVirtual->doArchive();
                 }
 
                 // clone has a new ID, so need to repoint
@@ -262,14 +265,18 @@ class BaseElementExtension extends DataExtension
                     if ($virtual->ID == $firstVirtual->ID) {
                         continue;
                     }
+
                     $pub = false;
+
                     if ($virtual->isPublished()) {
                         $pub = true;
                     }
+
                     $virtual->LinkedElementID = $clone->ID;
                     $virtual->write();
+
                     if ($pub) {
-                        $virtual->doPublish();
+                        $virtual->publishRecursive();
                     }
                 }
 
