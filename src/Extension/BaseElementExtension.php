@@ -166,6 +166,12 @@ class BaseElementExtension extends DataExtension
             ]);
         }
 
+        if ($this->owner->config()->get('inline_editable')) {
+            $fields->removeByName('VirtualClones');
+
+            return;
+        }
+
         if ($virtual = $fields->dataFieldByName('VirtualClones')) {
             if ($this->owner->VirtualClones()->Count() > 0) {
                 $tab = $fields->findOrMakeTab('Root.VirtualClones');
