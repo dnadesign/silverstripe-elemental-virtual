@@ -35,7 +35,7 @@ class BaseElementExtension extends DataExtension
      * @var array
      */
     private static $db = [
-        'AvailableGlobally' => 'Boolean(1)',
+        'AvailableGlobally' => 'Boolean(0)',
         'VirtualLookupTitle' => 'Varchar(200)'
     ];
 
