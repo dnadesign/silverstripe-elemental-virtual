@@ -4,3 +4,4 @@ composer.lock
 /assets
 /public
 .phpunit.result.cache
+app/

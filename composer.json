@@ -13,11 +13,11 @@
     "prefer-stable": true,
     "require": {
         "php": "^8.1",
-        "dnadesign/silverstripe-elemental": "^5",
-        "silverstripe/tagfield": "^3"
+        "dnadesign/silverstripe-elemental": "^6",
+        "silverstripe/tagfield": "^4"
     },
     "require-dev": {
-        "silverstripe/recipe-testing": "^3",
+        "silverstripe/recipe-testing": "^4",
         "squizlabs/php_codesniffer": "^3.0"
     },
     "extra": {

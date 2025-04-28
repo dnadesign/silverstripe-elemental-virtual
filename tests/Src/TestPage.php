@@ -7,5 +7,5 @@ use SilverStripe\Dev\TestOnly;
 
 class TestPage extends SiteTree implements TestOnly
 {
-    private static $table_name = 'TestElementalPage';
+    private static $table_name = 'VTestElementalPage';
 }

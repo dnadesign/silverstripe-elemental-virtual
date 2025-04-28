@@ -16,13 +16,13 @@ use SilverStripe\Forms\GridField\GridFieldDataColumns;
 use SilverStripe\Forms\GridField\GridFieldDetailForm;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\ReadonlyField;
-use SilverStripe\ORM\ArrayList;
-use SilverStripe\ORM\DataExtension;
+use SilverStripe\Model\List\ArrayList;
+use SilverStripe\Core\Extension;
 use SilverStripe\ORM\DB;
 use SilverStripe\ORM\FieldType\DBHTMLText;
 use SilverStripe\Versioned\Versioned;
 
-class BaseElementExtension extends DataExtension
+class BaseElementExtension extends Extension
 {
     /**
      * @config
@@ -54,7 +54,7 @@ class BaseElementExtension extends DataExtension
     }
 
 
-    public function requireDefaultRecords()
+    public function onRequireDefaultRecords(): void
     {
         $update = BaseElement::get()->filter([
             'VirtualLookupTitle' => [null, ''],
@@ -179,7 +179,7 @@ class BaseElementExtension extends DataExtension
 
                 if ($ownerPage = $this->owner->getPage()) {
                     if ($ownerPage->hasMethod('CMSEditLink')) {
-                        $link = $ownerPage->canEdit() ? $ownerPage->CMSEditLink() : $ownerPage->Link();
+                        $link = $ownerPage->canEdit() ? $ownerPage->getCMSEditLink() : $ownerPage->Link();
                     } else {
                         $link = $ownerPage->Link();
                     }
@@ -344,7 +344,7 @@ class BaseElementExtension extends DataExtension
         $arr = [];
         foreach ($usage as $page) {
             $type = ($page->ElementType) ? sprintf("<em> - %s</em>", $page->ElementType) : null;
-            $arr[] = sprintf("<a href=\"%s\" target=\"blank\">%s</a> %s", $page->CMSEditLink(), $page->Title, $type);
+            $arr[] = sprintf("<a href=\"%s\" target=\"blank\">%s</a> %s", $page->getCMSEditLink(), $page->Title, $type);
         }
         $html = DBHTMLText::create('UsageSummary');
         $html->setValue(implode('<br>', $arr));
