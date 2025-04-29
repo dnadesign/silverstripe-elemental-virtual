@@ -7,14 +7,20 @@ use SilverStripe\Dev\BuildTask;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\ORM\DB;
+use SilverStripe\PolyExecution\PolyOutput;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 
 class ResetGloballyEnabledElements extends BuildTask
 {
-    protected $title = 'Reset Globally Enabled elements';
+    protected static string $commandName = 'elemental:virtual:reset-globally-enabled';
 
-    protected $description = 'Reset individual elements \'AvailableGlobally\' setting via the YAML config';
+    protected string $title = 'Reset Globally Enabled elements';
 
-    public function run($request)
+    protected static string $description = "Reset individual elements 'AvailableGlobally' setting via the YAML config";
+
+    protected function execute(InputInterface $input, PolyOutput $output): int
     {
         // get all classes of BaseElement
         $elementClasses = ClassInfo::subclassesFor(BaseElement::class);
@@ -35,5 +41,7 @@ class ResetGloballyEnabledElements extends BuildTask
                 DB::query("UPDATE Element_Versions SET AvailableGlobally = $isGlobal WHERE RecordID IN ('$idStr')");
             }
         }
+
+        return Command::SUCCESS;
     }
 }

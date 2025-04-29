@@ -2,8 +2,8 @@
 
 namespace DNADesign\ElementalVirtual\Tests;
 
+use DNADesign\Elemental\Controllers\ElementController;
 use DNADesign\Elemental\Models\BaseElement;
-use DNADesign\ElementalVirtual\Control\ElementVirtualLinkedController;
 use DNADesign\ElementalVirtual\Tests\Src\TestElement;
 use DNADesign\ElementalVirtual\Tests\Src\TestPage;
 use DNADesign\ElementalVirtual\Model\ElementVirtual;
@@ -47,18 +47,22 @@ class BaseElementExtensionTest extends SapphireTest
     {
         $element = $this->objFromFixture(ElementVirtual::class, 'virtual1');
 
-        $controller = ElementVirtualLinkedController::create($element);
-
+        $controller = new ElementController($element);
+        $controller->doInit();
         $template = $controller->forTemplate();
 
-        $this->assertStringContainsString('element--test-element', $template);
+        $this->assertStringContainsString('dnadesign__elementalvirtual__tests__src__testelement', $template);
     }
 
     public function testUpdateCmsFields(): void
     {
         $linked = $this->objFromFixture(TestElement::class, 'element1');
 
+        $this->assertNull($linked->getCMSFields()->dataFieldByName('VirtualClones'));
+
         // should show that this element has virtual clones
+        Config::modify()->set(TestElement::class, 'inline_editable', false);
+
         $list = $linked->getCMSFields()->dataFieldByName('VirtualClones')->getList();
 
         $this->assertEquals(1, $list->count());

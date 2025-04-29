@@ -26,7 +26,7 @@ class ElementVirtual extends BaseElement
     /**
      * @var string
      */
-    private static $description = 'Reused element';
+    private static $class_description = 'Reused element';
 
     private static $table_name = 'ElementVirtual';
 
@@ -166,15 +166,13 @@ class ElementVirtual extends BaseElement
 
     /**
      * Override to render template based on LinkedElement
-     *
-     * @return string|null HTML
      */
-    public function forTemplate($holder = true)
+    public function forTemplate($holder = true): string
     {
         if ($linked = $this->LinkedElement()) {
             return $linked->forTemplate($holder);
         }
-        return null;
+        return '';
     }
 
     protected function provideBlockSchema()

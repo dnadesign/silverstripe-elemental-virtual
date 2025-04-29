@@ -8,15 +8,13 @@ use SilverStripe\Security\Permission;
 
 class TestElement extends BaseElement implements TestOnly
 {
-    private static $table_name = 'TestElement';
+    private static string $table_name = 'VTestElement';
 
-    private static $db = [
+    private static array $db = [
         'TestValue' => 'Text',
     ];
 
-    private static $controller_class = TestElementController::class;
-
-    public function getType()
+    public function getType(): string
     {
         return 'A test element';
     }
@@ -28,5 +26,12 @@ class TestElement extends BaseElement implements TestOnly
             return $check;
         }
         return parent::canView($member);
+    }
+
+    public function getRenderTemplates($suffix = '')
+    {
+        return [
+            __DIR__ . '/TestElement.ss'
+        ];
     }
 }
