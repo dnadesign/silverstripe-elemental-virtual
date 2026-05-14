@@ -178,7 +178,8 @@ class ElementVirtual extends BaseElement
     protected function provideBlockSchema()
     {
         $blockSchema = parent::provideBlockSchema();
-        $blockSchema['content'] = $this->getSummary();
+        $content = $this->getSummary();
+        $blockSchema['content'] = is_string($content) ? $content : null;
         return $blockSchema;
     }
 }

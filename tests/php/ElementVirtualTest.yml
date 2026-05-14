@@ -1,0 +1,25 @@
+DNADesign\Elemental\Models\ElementalArea:
+  area2:
+    Title: Test Area 2
+
+DNADesign\ElementalVirtual\Tests\Src\TestPage:
+  page2:
+    Title: Page 2
+    URLSegment: test-page-2
+    ElementalAreaID: =>DNADesign\Elemental\Models\ElementalArea.area2
+
+DNADesign\ElementalVirtual\Tests\Src\TestElement:
+  element_string:
+    Title: Element String
+    ParentID: =>DNADesign\Elemental\Models\ElementalArea.area2
+
+DNADesign\ElementalVirtual\Tests\Src\TestElementList:
+  element_list:
+    Title: Element List
+    ParentID: =>DNADesign\Elemental\Models\ElementalArea.area2
+
+DNADesign\ElementalVirtual\Model\ElementVirtual:
+  virtual_string:
+    LinkedElementID: =>DNADesign\ElementalVirtual\Tests\Src\TestElement.element_string
+  virtual_list:
+    LinkedElementID: =>DNADesign\ElementalVirtual\Tests\Src\TestElementList.element_list
