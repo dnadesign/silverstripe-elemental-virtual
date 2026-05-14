@@ -22,6 +22,9 @@ class TestElementList extends BaseElement implements TestOnly
         return [];
     }
 
+    /**
+     * @param string $suffix
+     */
     public function getRenderTemplates($suffix = '')
     {
         return [
