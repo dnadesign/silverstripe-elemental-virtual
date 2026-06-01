@@ -2,10 +2,17 @@
 
 namespace DNADesign\ElementalVirtual\Model;
 
+use Override;
 use DNADesign\Elemental\Models\BaseElement;
+use DNADesign\ElementalVirtual\Extensions\BaseElementExtension;
+use SilverStripe\Core\Convert;
+use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\LiteralField;
-use SilverStripe\TagField\TagField;
+use SilverStripe\Forms\SearchableDropdownField;
+use SilverStripe\Model\List\Map;
+use SilverStripe\ORM\DataList;
+use SilverStripe\ORM\DataObject;
 
 /**
  * Virtual Linked Element.
@@ -36,6 +43,22 @@ class ElementVirtual extends BaseElement
 
     private static $controller_template = 'ElementHolder_VirtualLinked';
 
+    private bool $inIsChanged = false;
+
+    #[Override]
+    public function isChanged($fieldName = null, $changeLevel = DataObject::CHANGE_STRICT)
+    {
+        if ($this->inIsChanged) {
+            return false;
+        }
+        $this->inIsChanged = true;
+        try {
+            return parent::isChanged($fieldName, $changeLevel);
+        } finally {
+            $this->inIsChanged = false;
+        }
+    }
+
     /**
      * @config
      *
@@ -55,6 +78,8 @@ class ElementVirtual extends BaseElement
         $this->LinkedElement()->setVirtualOwner($this);
     }
 
+
+    #[Override]
     public function getCMSFields()
     {
         $invalid = $this->isInvalidPublishState();
@@ -64,7 +89,7 @@ class ElementVirtual extends BaseElement
 
             if ($invalid) {
                 $warning = _t(
-                    __CLASS__ . '.InvalidPublishStateWarning',
+                    self::class . '.InvalidPublishStateWarning',
                     'Error: The original element is not published. This element will not work on the live site until ' .
                         'you click the link below and publish it.'
                 );
@@ -78,41 +103,47 @@ class ElementVirtual extends BaseElement
                 );
             }
 
-            $availableBlocks = BaseElement::get()
-                ->filter('AvailableGlobally', 1)
-                ->exclude('ClassName', ElementVirtual::class);
-
-            $fields->replaceField(
-                'LinkedElementID',
-                TagField::create("LinkedElementID", $this->fieldLabel('LinkedElement'), $availableBlocks)
-                    ->setIsMultiple(false)
-                    ->setCanCreate(false)
-                    ->setShouldLazyLoad(true)
-                    ->setTitleField($this->config()->get('linkable_title_field'))
-            );
-
             if ($this->LinkedElementID) {
                 $message = sprintf(
                     '<p>%s</p><p><a href="%2$s" target="_blank">Click here to edit the original</a></p>',
-                    _t(__CLASS__ . '.VirtualDescription', 'This is a virtual copy of an element.'),
+                    _t(self::class . '.VirtualDescription', 'This is a virtual copy of an element.'),
                     $this->LinkedElement()->getEditLink()
                 );
 
                 $fields->addFieldToTab('Root.Main', LiteralField::create('Existing', $message));
             }
         });
+        $fields = parent::getCMSFields();
+        $field = $fields->dataFieldByName('LinkedElementID');
+        $list = BaseElement::get()->filter(['AvailableGlobally' => 1])
+                    ->sort(['VirtualLookupTitle' => 'ASC'])
+                    ->exclude(['ClassName' => ElementVirtual::class]);
+        $list = $this->sortDataListBetter(
+            $list,
+            'VirtualLookupTitle',
+            [
+                BaseElementExtension::not_in_use_string(),
+                BaseElementExtension::no_title_string()
+            ]
+        );
+        if ($field instanceof SearchableDropdownField) {
+            $field->setSource($list);
+        } elseif ($field instanceof DropdownField) {
+            $field
+                ->setSource($list->map('ID', 'VirtualLookupTitle')->toArray())
+                ->setEmptyString(_t(self::class . '.SelectElement', '-- Select an element --'));
+        }
 
-        return parent::getCMSFields();
+        return $fields;
     }
 
     /**
      * @return string
      */
+    #[Override]
     public function getType()
     {
-        return sprintf(
-            _t(__CLASS__ . '.BlockType', 'Virtual Block')
-        );
+        return _t(self::class . '.BlockType', 'Virtual Block');
     }
 
     /**
@@ -121,7 +152,7 @@ class ElementVirtual extends BaseElement
      *
      * @return boolean
      */
-    public function isInvalidPublishState()
+    public function isInvalidPublishState(): bool
     {
         $element = $this->LinkedElement();
 
@@ -133,7 +164,8 @@ class ElementVirtual extends BaseElement
      *
      * @return string
      */
-    public function getAnchor()
+    #[Override]
+    public function getAnchor(): string
     {
         $linkedElement = $this->LinkedElement();
 
@@ -147,7 +179,8 @@ class ElementVirtual extends BaseElement
     /**
      * @return string
      */
-    public function getSummary()
+    #[Override]
+    public function getSummary(): ?string
     {
         if ($linked = $this->LinkedElement()) {
             return $linked->getSummary();
@@ -157,7 +190,8 @@ class ElementVirtual extends BaseElement
     /**
      * @return string
      */
-    public function getTitle()
+    #[Override]
+    public function getTitle(): ?string
     {
         if ($linked = $this->LinkedElement()) {
             return $linked->Title;
@@ -167,18 +201,39 @@ class ElementVirtual extends BaseElement
     /**
      * Override to render template based on LinkedElement
      */
+    #[Override]
     public function forTemplate($holder = true): string
     {
         if ($linked = $this->LinkedElement()) {
             return $linked->forTemplate($holder);
         }
+
         return '';
     }
 
-    protected function provideBlockSchema()
+    #[Override]
+    protected function provideBlockSchema(): array
     {
         $blockSchema = parent::provideBlockSchema();
         $blockSchema['content'] = $this->getSummary();
         return $blockSchema;
     }
+
+    protected function sortDataListBetter(DataList $list, string $column, array $stringsToDemote): DataList
+    {
+        if (empty($stringsToDemote)) {
+            return $list;
+        }
+
+        $cases = '';
+        foreach ($stringsToDemote as $index => $phrase) {
+            $escaped = Convert::raw2sql($phrase);
+            $cases .= "WHEN \"{$column}\" LIKE '%{$escaped}%' THEN {$index} ";
+        }
+
+        $demoteSQL = "CASE {$cases} ELSE -1 END";
+
+        return $list->orderBy($demoteSQL . ' ASC');
+    }
+
 }

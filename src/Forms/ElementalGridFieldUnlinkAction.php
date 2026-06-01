@@ -2,12 +2,14 @@
 
 namespace DNADesign\ElementalVirtual\Forms;
 
+use Override;
 use DNADesign\ElementalVirtual\Model\ElementVirtual;
 use SilverStripe\Forms\GridField\GridFieldDeleteAction;
 use SilverStripe\Forms\GridField\GridField_FormAction;
 
 class ElementalGridFieldUnlinkAction extends GridFieldDeleteAction
 {
+    #[Override]
     public function getColumnContent($gridField, $record, $columnName)
     {
         if (!$record->canDelete()) {
@@ -23,7 +25,7 @@ class ElementalGridFieldUnlinkAction extends GridFieldDeleteAction
                 ['RecordID' => $record->ID]
             )
                 ->addExtraClass('gridfield-button-unlink')
-                ->setAttribute('title', _t(__CLASS__ . '.UnlinkRelation', 'Unlink'))
+                ->setAttribute('title', _t(self::class . '.UnlinkRelation', 'Unlink'))
                 ->setAttribute('data-icon', 'chain--minus');
 
             return $field->Field();
