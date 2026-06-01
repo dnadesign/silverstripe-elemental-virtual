@@ -5,6 +5,7 @@ namespace DNADesign\ElementalVirtual\Extensions;
 use SilverStripe\Forms\FormField;
 use DNADesign\Elemental\Models\BaseElement;
 use DNADesign\Elemental\Models\ElementalArea;
+use DNADesign\ElementalVirtual\Api\UpdateVirtualTitles;
 use DNADesign\ElementalVirtual\Forms\ElementalGridFieldDeleteAction;
 use DNADesign\ElementalVirtual\Model\ElementVirtual;
 use SilverStripe\Core\Convert;
