@@ -6,12 +6,14 @@ use DNADesign\Elemental\Controllers\ElementController;
 use DNADesign\Elemental\Models\BaseElement;
 use DNADesign\ElementalVirtual\Api\UpdateVirtualTitles;
 use DNADesign\ElementalVirtual\Tests\Src\TestElement;
+use DNADesign\ElementalVirtual\Tests\Src\TestElementController;
 use DNADesign\ElementalVirtual\Tests\Src\TestPage;
 use DNADesign\ElementalVirtual\Model\ElementVirtual;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DB;
+use SilverStripe\View\Requirements;
 
 class BaseElementExtensionTest extends SapphireTest
 {
@@ -206,5 +208,19 @@ class BaseElementExtensionTest extends SapphireTest
         $existing = $virtual->getCMSFields()->fieldByName('Root.Main.Existing');
         $this->assertStringNotContainsString('Click here to edit the original', $existing->getContent());
         $this->assertStringContainsString('archived or deleted', $existing->getContent());
+    }
+
+    /**
+     * @see https://github.com/dnadesign/silverstripe-elemental-virtual/issues/78
+     */
+    public function testRenderingInitialisesLinkedElementController(): void
+    {
+        Config::modify()->set(TestElement::class, 'controller_class', TestElementController::class);
+        Requirements::clear();
+
+        $element = $this->objFromFixture(ElementVirtual::class, 'virtual1');
+        $element->forTemplate();
+
+        $this->assertArrayHasKey('TestElementControllerInit', Requirements::backend()->getCustomScripts());
     }
 }

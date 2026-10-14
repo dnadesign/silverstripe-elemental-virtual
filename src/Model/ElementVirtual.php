@@ -261,6 +261,10 @@ class ElementVirtual extends BaseElement
     {
         $linked = $this->LinkedElement();
         if ($linked && $linked->exists()) {
+            // Initialise the linked element's controller, as ElementalArea::ElementControllers()
+            // would for a normal block, so any requirements it adds in init() are loaded
+            $linked->getController();
+
             return $linked->forTemplate($holder);
         }
 
