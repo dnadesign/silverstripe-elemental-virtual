@@ -16,21 +16,21 @@ class VirtualElementalContentControllerExtension extends Extension
 
     public function handleElement()
     {
-        $id = $this->owner->getRequest()->param('ID');
+        $id = $this->getOwner()->getRequest()->param('ID');
 
         if (!$id) {
-            return $this->owner->httpError(400, 'no element ID provided');
+            return $this->getOwner()->httpError(400, 'no element ID provided');
         }
 
-        $element = BaseElement::get()->filter('ID', $id)->First();
-        $page = $this->owner->data();
+        $element = BaseElement::get()->filter(['ID' => $id])->First();
+        $page = $this->getOwner()->data();
 
         if ($element && $element->canView()) {
             $useElement = clone $element;
 
             // modify the element to appear on the correct 'Page' so that
             // any breadcrumbs and titles are correct.
-            $elementalAreaRelations = $this->owner->getElementalRelations();
+            $elementalAreaRelations = $this->getOwner()->getElementalRelations();
             $id = null;
 
             foreach ($elementalAreaRelations as $elementalAreaRelation) {
@@ -48,6 +48,6 @@ class VirtualElementalContentControllerExtension extends Extension
             return $controller;
         }
 
-        return $this->owner->httpError(404);
+        return $this->getOwner()->httpError(404);
     }
 }
