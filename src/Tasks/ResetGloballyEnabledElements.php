@@ -34,10 +34,17 @@ class ResetGloballyEnabledElements extends BuildTask
             $isGlobal = Config::inst()->get($class, 'default_global_elements') ? 1 : 0;
             $ids = $class::get()->getIDList();
             if (!empty($ids)) {
-                $idStr = implode("','", $ids);
-                DB::query(sprintf("UPDATE Element SET AvailableGlobally = %s WHERE ID IN ('%s')", $isGlobal, $idStr));
-                DB::query(sprintf("UPDATE Element_Live SET AvailableGlobally = %s WHERE ID IN ('%s')", $isGlobal, $idStr));
-                DB::query(sprintf("UPDATE Element_Versions SET AvailableGlobally = %s WHERE RecordID IN ('%s')", $isGlobal, $idStr));
+                $idStr = implode(',', array_map('intval', $ids));
+                $tables = ['Element' => 'ID', 'Element_Live' => 'ID', 'Element_Versions' => 'RecordID'];
+                foreach ($tables as $table => $idColumn) {
+                    DB::query(sprintf(
+                        'UPDATE "%s" SET "AvailableGlobally" = %d WHERE "%s" IN (%s)',
+                        $table,
+                        $isGlobal,
+                        $idColumn,
+                        $idStr
+                    ));
+                }
             }
         }
 

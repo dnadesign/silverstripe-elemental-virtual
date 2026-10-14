@@ -3,8 +3,13 @@ en:
     GridFieldTitle: Title
     GridFieldUsedOn: 'Used on'
     LinkedTo: 'Linked To'
+    LookupDescription: 'Search for the above title when linking to this element'
+    LookupTitle: 'Virtual Lookup Title'
+    NoTitle: '[no title]'
+    NotInUse: 'not currently in use'
     OriginalContentFrom: 'The original content element appears on'
     OtherPages: 'Other pages'
+    UsedOnPage: 'used on {page}'
   DNADesign\ElementalVirtual\Forms\ElementalGridFieldUnlinkAction:
     UnlinkRelation: Unlink
   DNADesign\ElementalVirtual\Model\ElementVirtual:
@@ -16,4 +21,5 @@ en:
       one: 'A virtual block'
       other: '{count} blocks'
     SINGULARNAME: 'virtual block'
+    SelectElement: '-- Select an element --'
     VirtualDescription: 'This is a virtual copy of an element.'

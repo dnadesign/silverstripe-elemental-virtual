@@ -10,7 +10,6 @@ use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\SearchableDropdownField;
-use SilverStripe\Model\List\Map;
 use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\DataObject;
 
@@ -115,26 +114,41 @@ class ElementVirtual extends BaseElement
         });
         $fields = parent::getCMSFields();
         $field = $fields->dataFieldByName('LinkedElementID');
-        $list = BaseElement::get()->filter(['AvailableGlobally' => 1])
-                    ->sort(['VirtualLookupTitle' => 'ASC'])
-                    ->exclude(['ClassName' => ElementVirtual::class]);
-        $list = $this->sortDataListBetter(
-            $list,
-            'VirtualLookupTitle',
-            [
-                BaseElementExtension::not_in_use_string(),
-                BaseElementExtension::no_title_string()
-            ]
-        );
+        $titleField = $this->config()->get('linkable_title_field');
+        $list = $this->getLinkableElements();
+
         if ($field instanceof SearchableDropdownField) {
-            $field->setSource($list);
+            $field
+                ->setSource($list)
+                ->setLabelField($titleField);
         } elseif ($field instanceof DropdownField) {
             $field
-                ->setSource($list->map('ID', 'VirtualLookupTitle')->toArray())
+                ->setSource($list->map('ID', $titleField)->toArray())
                 ->setEmptyString(_t(self::class . '.SelectElement', '-- Select an element --'));
         }
 
         return $fields;
+    }
+
+    /**
+     * Elements that can be selected as the linked element, sorted by lookup
+     * title with untitled and unused elements at the end of the list.
+     */
+    public function getLinkableElements(): DataList
+    {
+        $titleField = $this->config()->get('linkable_title_field');
+        $list = BaseElement::get()
+            ->filter(['AvailableGlobally' => 1])
+            ->exclude(['ClassName' => ElementVirtual::class]);
+
+        return $this->sortDataListBetter(
+            $list,
+            $titleField,
+            [
+                BaseElementExtension::no_title_string(),
+                BaseElementExtension::not_in_use_string(),
+            ]
+        );
     }
 
     /**
@@ -182,9 +196,14 @@ class ElementVirtual extends BaseElement
     #[Override]
     public function getSummary(): ?string
     {
-        if ($linked = $this->LinkedElement()) {
-            return $linked->getSummary();
+        $linked = $this->LinkedElement();
+        if ($linked && $linked->exists()) {
+            // Linked elements may return a DBField (e.g. DBHTMLText) which
+            // can't be serialised into the block schema (#28)
+            return (string) $linked->getSummary();
         }
+
+        return null;
     }
 
     /**
@@ -193,9 +212,12 @@ class ElementVirtual extends BaseElement
     #[Override]
     public function getTitle(): ?string
     {
-        if ($linked = $this->LinkedElement()) {
+        $linked = $this->LinkedElement();
+        if ($linked && $linked->exists()) {
             return $linked->Title;
         }
+
+        return null;
     }
 
     /**
@@ -204,7 +226,8 @@ class ElementVirtual extends BaseElement
     #[Override]
     public function forTemplate($holder = true): string
     {
-        if ($linked = $this->LinkedElement()) {
+        $linked = $this->LinkedElement();
+        if ($linked && $linked->exists()) {
             return $linked->forTemplate($holder);
         }
 
@@ -225,15 +248,13 @@ class ElementVirtual extends BaseElement
             return $list;
         }
 
+        $column = Convert::symbol2sql($list->dataClass()::singleton()->baseTable() . '.' . $column);
         $cases = '';
-        foreach ($stringsToDemote as $index => $phrase) {
-            $escaped = Convert::raw2sql($phrase);
-            $cases .= "WHEN \"{$column}\" LIKE '%{$escaped}%' THEN {$index} ";
+        foreach (array_values($stringsToDemote) as $index => $phrase) {
+            $escaped = Convert::raw2sql('%' . $phrase . '%');
+            $cases .= sprintf("WHEN %s LIKE '%s' THEN %d ", $column, $escaped, $index + 1);
         }
 
-        $demoteSQL = "CASE {$cases} ELSE -1 END";
-
-        return $list->orderBy($demoteSQL . ' ASC');
+        return $list->orderBy(sprintf('CASE %sELSE 0 END ASC, %s ASC', $cases, $column));
     }
-
 }

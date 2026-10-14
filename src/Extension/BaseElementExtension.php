@@ -3,12 +3,10 @@
 namespace DNADesign\ElementalVirtual\Extensions;
 
 use SilverStripe\Forms\FormField;
-use DNADesign\Elemental\Models\BaseElement;
 use DNADesign\Elemental\Models\ElementalArea;
 use DNADesign\ElementalVirtual\Api\UpdateVirtualTitles;
 use DNADesign\ElementalVirtual\Forms\ElementalGridFieldDeleteAction;
 use DNADesign\ElementalVirtual\Model\ElementVirtual;
-use SilverStripe\Core\Convert;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\GridField\GridFieldAddExistingAutocompleter;
 use SilverStripe\Forms\GridField\GridFieldAddNewButton;
@@ -20,7 +18,6 @@ use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\ReadonlyField;
 use SilverStripe\Model\List\ArrayList;
 use SilverStripe\Core\Extension;
-use SilverStripe\ORM\DB;
 use SilverStripe\ORM\FieldType\DBHTMLText;
 use SilverStripe\Versioned\Versioned;
 
@@ -69,7 +66,9 @@ class BaseElementExtension extends Extension
      */
     public function setVirtualOwner(ElementVirtual $owner)
     {
-        $this->getOwner()->setField('_virtualOwner', $owner);
+        // Stored as dynamic data rather than in the record so that the owner is
+        // never treated as a changed field of the linked element (see #75)
+        $this->getOwner()->setDynamicData('_virtualOwner', $owner);
         return $this;
     }
 
@@ -78,8 +77,7 @@ class BaseElementExtension extends Extension
      */
     public function getVirtualOwner()
     {
-        $owner = $this->getOwner();
-        return $owner->getField('_virtualOwner');
+        return $this->getOwner()->getDynamicData('_virtualOwner');
     }
 
     /**
@@ -104,20 +102,22 @@ class BaseElementExtension extends Extension
         $owner = $this->getOwner();
 
         $page = $owner->getPage();
-        $page = $page ?
-            _t(self::class . '.UsedOnPage', ' - used on {page}', ['page' => $page->Title]) :
-            self::not_in_use_string();
+        $usage = $page
+            ? _t(self::class . '.UsedOnPage', 'used on {page}', ['page' => $page->Title])
+            : self::not_in_use_string();
 
-        $title = trim($owner->getTitle() ?: self::no_title_string());
+        $title = trim((string) $owner->getTitle());
+        if ($title === '') {
+            $title = self::no_title_string();
+        }
 
-        $type = trim($owner->getType());
-
-        $summary = Convert::raw2sql(sprintf(
-            '%s (%s%s)',
+        $summary = sprintf(
+            '%s (%s #%s - %s)',
             $title,
-            $type,
-            $page
-        ));
+            trim((string) $owner->getType()),
+            $owner->ID,
+            $usage
+        );
 
         $owner->invokeWithExtensions('updateVirtualLinkedSummary', $summary);
 
@@ -126,12 +126,12 @@ class BaseElementExtension extends Extension
 
     public static function not_in_use_string(): string
     {
-        return _t(self::class . '.NotInUse', ' - not currently in use');
+        return _t(self::class . '.NotInUse', 'not currently in use');
     }
 
     public static function no_title_string(): string
     {
-        return _t(self::class . '.NoTitle', ' - no title');
+        return _t(self::class . '.NoTitle', '[no title]');
     }
 
     /**
@@ -194,7 +194,10 @@ class BaseElementExtension extends Extension
                             'DisplaysOnPage',
                             sprintf(
                                 "<p>"
-                                    . _t(self::class . '.OriginalContentFrom', 'The original content element appears on')
+                                    . _t(
+                                        self::class . '.OriginalContentFrom',
+                                        'The original content element appears on'
+                                    )
                                     . " <a href='%s'>%s</a></p>",
                                 $link,
                                 $ownerPage->MenuTitle
@@ -319,7 +322,7 @@ class BaseElementExtension extends Extension
         $owner = $this->getOwner();
         if ($page = $owner->getPage()) {
             $usage->push($page);
-            if ($owner->getField('_virtualOwner')) {
+            if ($owner->getVirtualOwner()) {
                 $page->setField('ElementType', 'Linked');
             } else {
                 $page->setField('ElementType', 'Master');
