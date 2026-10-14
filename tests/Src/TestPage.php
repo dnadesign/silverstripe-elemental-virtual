@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DNADesign\ElementalVirtual\Tests\Src;
 
 use DNADesign\Elemental\Extensions\ElementalPageExtension;

@@ -2,8 +2,8 @@
 
 namespace DNADesign\ElementalVirtual\Forms;
 
+use Override;
 use SilverStripe\Forms\GridField\GridFieldDeleteAction;
-use SilverStripe\Forms\GridField\GridField_FormAction;
 
 /**
  * @package elemental
@@ -11,6 +11,7 @@ use SilverStripe\Forms\GridField\GridField_FormAction;
 class ElementalGridFieldDeleteAction extends GridFieldDeleteAction
 {
 
+    #[Override]
     public function getColumnContent($gridField, $record, $columnName)
     {
         if (!$record->canDelete()) {
