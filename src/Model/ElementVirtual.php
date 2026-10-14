@@ -3,6 +3,8 @@
 namespace DNADesign\ElementalVirtual\Model;
 
 use DNADesign\Elemental\Models\BaseElement;
+use SilverStripe\Control\Director;
+use SilverStripe\Core\Convert;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\TagField\TagField;
@@ -92,17 +94,49 @@ class ElementVirtual extends BaseElement
             );
 
             if ($this->LinkedElementID) {
-                $message = sprintf(
-                    '<p>%s</p><p><a href="%2$s" target="_blank">Click here to edit the original</a></p>',
-                    _t(__CLASS__ . '.VirtualDescription', 'This is a virtual copy of an element.'),
-                    $this->LinkedElement()->getEditLink()
-                );
+                $description = _t(__CLASS__ . '.VirtualDescription', 'This is a virtual copy of an element.');
+                $editLink = $this->getLinkedElementEditLink();
+
+                if ($editLink) {
+                    $message = sprintf(
+                        '<p>%s</p><p><a href="%s" target="_blank">%s</a></p>',
+                        $description,
+                        Convert::raw2att($editLink),
+                        _t(__CLASS__ . '.EditOriginal', 'Click here to edit the original')
+                    );
+                } else {
+                    $message = sprintf(
+                        '<p>%s</p><p class="message warning">%s</p>',
+                        $description,
+                        _t(
+                            __CLASS__ . '.OriginalNotEditable',
+                            'The original element can\'t be edited because the page it belongs to has been ' .
+                                'archived or deleted. Restore that page, or link this block to a different element.'
+                        )
+                    );
+                }
 
                 $fields->addFieldToTab('Root.Main', LiteralField::create('Existing', $message));
             }
         });
 
         return parent::getCMSFields();
+    }
+
+    /**
+     * The CMS edit link for the linked element, or null if it can't be edited
+     * (e.g. it no longer exists, or the page it's on has been archived)
+     */
+    public function getLinkedElementEditLink(): ?string
+    {
+        $linked = $this->LinkedElement();
+        if (!$linked || !$linked->exists()) {
+            return null;
+        }
+
+        $link = $linked->getCMSEditLink();
+
+        return $link ? Director::absoluteURL($link) : null;
     }
 
     /**
