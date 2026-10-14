@@ -2,6 +2,7 @@
 
 namespace DNADesign\ElementalVirtual\Control;
 
+use Override;
 use DNADesign\Elemental\Controllers\ElementController;
 use Exception;
 use SilverStripe\Control\HTTPResponse;
@@ -13,6 +14,7 @@ class ElementVirtualLinkedController extends ElementController
      *
      * @return string
      */
+    #[Override]
     public function Link($action = null)
     {
         if ($this->data()->virtualOwner) {
@@ -32,6 +34,7 @@ class ElementVirtualLinkedController extends ElementController
      *
      * @return HTTPResponse
      */
+    #[Override]
     public function redirect(string $url, int $code = 302): HTTPResponse
     {
         if ($this->data()->virtualOwner) {
@@ -50,10 +53,11 @@ class ElementVirtualLinkedController extends ElementController
     {
         try {
             $retVal = parent::__call($method, $arguments);
-        } catch (Exception $e) {
+        } catch (Exception) {
             $controller = $this->LinkedElement()->getController();
             $retVal = $controller->{$method}(...$arguments);
         }
+
         return $retVal;
     }
 
@@ -67,6 +71,7 @@ class ElementVirtualLinkedController extends ElementController
         return $controller->hasMethod($action);
     }
 
+    #[Override]
     public function hasAction($action)
     {
         if (parent::hasAction($action)) {
@@ -78,6 +83,7 @@ class ElementVirtualLinkedController extends ElementController
         return $controller->hasAction($action);
     }
 
+    #[Override]
     public function checkAccessAction($action)
     {
         if (parent::checkAccessAction($action)) {

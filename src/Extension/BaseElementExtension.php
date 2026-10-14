@@ -2,8 +2,10 @@
 
 namespace DNADesign\ElementalVirtual\Extensions;
 
+use SilverStripe\Forms\FormField;
 use DNADesign\Elemental\Models\BaseElement;
 use DNADesign\Elemental\Models\ElementalArea;
+use DNADesign\ElementalVirtual\Api\UpdateVirtualTitles;
 use DNADesign\ElementalVirtual\Forms\ElementalGridFieldDeleteAction;
 use DNADesign\ElementalVirtual\Model\ElementVirtual;
 use SilverStripe\Core\Convert;
@@ -46,41 +48,18 @@ class BaseElementExtension extends Extension
         'VirtualClones' => ElementVirtual::class
     ];
 
-    public function populateDefaults()
+    public function onAfterPopulateDefaults()
     {
-        $default = $this->owner->config()->get('default_global_elements');
+        $owner = $this->getOwner();
+        $default = $owner->config()->get('default_global_elements');
 
-        $this->owner->AvailableGlobally = $default;
+        $owner->AvailableGlobally = $default;
     }
 
 
     public function onRequireDefaultRecords(): void
     {
-        $update = BaseElement::get()->filter([
-            'VirtualLookupTitle' => [null, ''],
-            'AvailableGlobally' => 1
-        ]);
-
-        $table = BaseElement::singleton()->baseTable();
-
-        foreach ($update as $element) {
-            $title = $element->getVirtualLinkedSummary();
-
-            // populate the new VirtualLookupTitle
-            DB::query(sprintf(
-                "UPDATE %s SET VirtualLookupTitle = '%s' WHERE ID = %d",
-                $table,
-                $title,
-                $element->ID
-            ));
-
-            DB::query(sprintf(
-                "UPDATE %s_Live SET VirtualLookupTitle = '%s' WHERE ID = %d",
-                $table,
-                $title,
-                $element->ID
-            ));
-        }
+        UpdateVirtualTitles::update_virtual_titles();
     }
 
     /**
@@ -90,7 +69,7 @@ class BaseElementExtension extends Extension
      */
     public function setVirtualOwner(ElementVirtual $owner)
     {
-        $this->owner->setField('_virtualOwner', $owner);
+        $this->getOwner()->setField('_virtualOwner', $owner);
         return $this;
     }
 
@@ -99,7 +78,8 @@ class BaseElementExtension extends Extension
      */
     public function getVirtualOwner()
     {
-        return $this->owner->getField('_virtualOwner');
+        $owner = $this->getOwner();
+        return $owner->getField('_virtualOwner');
     }
 
     /**
@@ -110,8 +90,9 @@ class BaseElementExtension extends Extension
      */
     public function getVirtualElements()
     {
+        $owner = $this->getOwner();
         return ElementVirtual::get()->filter([
-            'LinkedElementID' => $this->owner->ID
+            'LinkedElementID' => $owner->ID
         ]);
     }
 
@@ -120,13 +101,37 @@ class BaseElementExtension extends Extension
      */
     public function getVirtualLinkedSummary()
     {
-        $title = trim((string) $this->owner->Title);
-        $titlePrefix = $title === '' ? '' : sprintf('%s ', Convert::raw2sql($title));
-        $summary = sprintf('%s(%s #%s)', $titlePrefix, $this->owner->getType(), $this->owner->ID);
+        $owner = $this->getOwner();
 
-        $this->owner->invokeWithExtensions('updateVirtualLinkedSummary', $summary);
+        $page = $owner->getPage();
+        $page = $page ?
+            _t(self::class . '.UsedOnPage', ' - used on {page}', ['page' => $page->Title]) :
+            self::not_in_use_string();
+
+        $title = trim($owner->getTitle() ?: self::no_title_string());
+
+        $type = trim($owner->getType());
+
+        $summary = Convert::raw2sql(sprintf(
+            '%s (%s%s)',
+            $title,
+            $type,
+            $page
+        ));
+
+        $owner->invokeWithExtensions('updateVirtualLinkedSummary', $summary);
 
         return $summary;
+    }
+
+    public static function not_in_use_string(): string
+    {
+        return _t(self::class . '.NotInUse', ' - not currently in use');
+    }
+
+    public static function no_title_string(): string
+    {
+        return _t(self::class . '.NoTitle', ' - no title');
     }
 
     /**
@@ -134,8 +139,9 @@ class BaseElementExtension extends Extension
      */
     public function getPublishedVirtualElements()
     {
+        $owner = $this->getOwner();
         return ElementVirtual::get()->filter([
-            'LinkedElementID' => $this->owner->ID
+            'LinkedElementID' => $owner->ID
         ])->setDataQueryParam([
             'Versioned.mode' => 'stage',
             'Versioned.stage' => 'Live'
@@ -147,10 +153,11 @@ class BaseElementExtension extends Extension
      */
     public function updateCMSFields(FieldList $fields)
     {
+        $owner = $this->getOwner();
         $global = $fields->dataFieldByName('AvailableGlobally');
 
-        if ($global) {
-            $desc = _t(__CLASS__ . '.LookupDescription', 'Search for the above title when linking to this element');
+        if ($global instanceof FormField) {
+            $desc = _t(self::class . '.LookupDescription', 'Search for the above title when linking to this element');
             $fields->removeByName([
                 'VirtualLookupTitle',
                 'AvailableGlobally'
@@ -158,23 +165,23 @@ class BaseElementExtension extends Extension
 
             $fields->addFieldsToTab('Root.Settings', [
                 $global,
-                ReadonlyField::create('VirtualLookupTitle', _t(__CLASS__ . '.LookupTitle', 'Virtual Lookup Title'))
+                ReadonlyField::create('VirtualLookupTitle', _t(self::class . '.LookupTitle', 'Virtual Lookup Title'))
                     ->setDescription($desc)
             ]);
         }
 
-        if ($this->owner->config()->get('inline_editable')) {
+        if ($owner->config()->get('inline_editable')) {
             $fields->removeByName('VirtualClones');
 
             return;
         }
 
-        if ($virtual = $fields->dataFieldByName('VirtualClones')) {
-            if ($this->owner->VirtualClones()->Count() > 0) {
+        if (($virtual = $fields->dataFieldByName('VirtualClones')) instanceof FormField) {
+            if ($owner->VirtualClones()->Count() > 0) {
                 $tab = $fields->findOrMakeTab('Root.VirtualClones');
-                $tab->setTitle(_t(__CLASS__ . '.LinkedTo', 'Linked To'));
+                $tab->setTitle(_t(self::class . '.LinkedTo', 'Linked To'));
 
-                if ($ownerPage = $this->owner->getPage()) {
+                if ($ownerPage = $owner->getPage()) {
                     if ($ownerPage->hasMethod('CMSEditLink')) {
                         $link = $ownerPage->canEdit() ? $ownerPage->getCMSEditLink() : $ownerPage->Link();
                     } else {
@@ -187,7 +194,7 @@ class BaseElementExtension extends Extension
                             'DisplaysOnPage',
                             sprintf(
                                 "<p>"
-                                    . _t(__CLASS__ . '.OriginalContentFrom', 'The original content element appears on')
+                                    . _t(self::class . '.OriginalContentFrom', 'The original content element appears on')
                                     . " <a href='%s'>%s</a></p>",
                                 $link,
                                 $ownerPage->MenuTitle
@@ -197,21 +204,21 @@ class BaseElementExtension extends Extension
                     );
                 }
 
-                $virtual->setConfig(new GridFieldConfig_Base());
+                $virtual->setConfig(GridFieldConfig_Base::create());
                 $virtual
-                    ->setTitle(_t(__CLASS__ . '.OtherPages', 'Other pages'))
+                    ->setTitle(_t(self::class . '.OtherPages', 'Other pages'))
                     ->getConfig()
                     ->removeComponentsByType(GridFieldAddExistingAutocompleter::class)
                     ->removeComponentsByType(GridFieldAddNewButton::class)
                     ->removeComponentsByType(GridFieldDeleteAction::class)
                     ->removeComponentsByType(GridFieldDetailForm::class)
-                    ->addComponent(new ElementalGridFieldDeleteAction());
+                    ->addComponent(ElementalGridFieldDeleteAction::create());
 
                 $virtual->getConfig()
                     ->getComponentByType(GridFieldDataColumns::class)
                     ->setDisplayFields([
-                        'getPage.Title' => _t(__CLASS__ . '.GridFieldTitle', 'Title'),
-                        'ParentCMSEditLink' => _t(__CLASS__ . '.GridFieldUsedOn', 'Used on'),
+                        'getPage.Title' => _t(self::class . '.GridFieldTitle', 'Title'),
+                        'ParentCMSEditLink' => _t(self::class . '.GridFieldUsedOn', 'Used on'),
                     ]);
             } else {
                 $fields->removeByName('VirtualClones');
@@ -222,7 +229,8 @@ class BaseElementExtension extends Extension
 
     public function onBeforeWrite()
     {
-        $this->owner->setField('VirtualLookupTitle', $this->owner->getVirtualLinkedSummary());
+        $owner = $this->getOwner();
+        $owner->setField('VirtualLookupTitle', $owner->getVirtualLinkedSummary());
     }
 
     /**
@@ -233,6 +241,7 @@ class BaseElementExtension extends Extension
      */
     public function onBeforeDelete()
     {
+        $owner = $this->getOwner();
         if (Versioned::get_reading_mode() == 'Stage.Stage') {
             $firstVirtual = false;
             $allVirtual = $this->getVirtualElements();
@@ -248,7 +257,7 @@ class BaseElementExtension extends Extension
             }
 
             if ($firstVirtual) {
-                $clone = $this->owner->duplicate(false);
+                $clone = $owner->duplicate(false);
 
                 // set clones values to first virtual's values
                 $clone->ParentID = $firstVirtual->ParentID;
@@ -306,18 +315,18 @@ class BaseElementExtension extends Extension
      */
     public function getUsage()
     {
-        $usage = new ArrayList();
-
-        if ($page = $this->owner->getPage()) {
+        $usage = ArrayList::create();
+        $owner = $this->getOwner();
+        if ($page = $owner->getPage()) {
             $usage->push($page);
-            if ($this->owner->getField('_virtualOwner')) {
+            if ($owner->getField('_virtualOwner')) {
                 $page->setField('ElementType', 'Linked');
             } else {
                 $page->setField('ElementType', 'Master');
             }
         }
 
-        $linkedElements = ElementVirtual::get()->filter('LinkedElementID', $this->owner->ID);
+        $linkedElements = ElementVirtual::get()->filter(['LinkedElementID' => $owner->ID]);
 
         foreach ($linkedElements as $element) {
             $area = $element->Parent();
@@ -341,8 +350,9 @@ class BaseElementExtension extends Extension
         $arr = [];
         foreach ($usage as $page) {
             $type = ($page->ElementType) ? sprintf("<em> - %s</em>", $page->ElementType) : null;
-            $arr[] = sprintf("<a href=\"%s\" target=\"blank\">%s</a> %s", $page->getCMSEditLink(), $page->Title, $type);
+            $arr[] = sprintf('<a href="%s" target="blank">%s</a> %s', $page->getCMSEditLink(), $page->Title, $type);
         }
+
         $html = DBHTMLText::create('UsageSummary');
         $html->setValue(implode('<br>', $arr));
 

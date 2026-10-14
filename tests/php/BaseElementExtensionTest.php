@@ -22,7 +22,7 @@ class BaseElementExtensionTest extends SapphireTest
         TestPage::class
     ];
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -47,8 +47,9 @@ class BaseElementExtensionTest extends SapphireTest
     {
         $element = $this->objFromFixture(ElementVirtual::class, 'virtual1');
 
-        $controller = new ElementController($element);
+        $controller = ElementController::create($element);
         $controller->doInit();
+
         $template = $controller->forTemplate();
 
         $this->assertStringContainsString('dnadesign__elementalvirtual__tests__src__testelement', $template);
