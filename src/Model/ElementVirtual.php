@@ -12,6 +12,7 @@ use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\SearchableDropdownField;
 use SilverStripe\Model\List\Map;
 use SilverStripe\ORM\DataList;
+use SilverStripe\ORM\DataObject;
 
 /**
  * Virtual Linked Element.
@@ -42,6 +43,22 @@ class ElementVirtual extends BaseElement
 
     private static $controller_template = 'ElementHolder_VirtualLinked';
 
+    private bool $inIsChanged = false;
+
+    #[Override]
+    public function isChanged($fieldName = null, $changeLevel = DataObject::CHANGE_STRICT)
+    {
+        if ($this->inIsChanged) {
+            return false;
+        }
+        $this->inIsChanged = true;
+        try {
+            return parent::isChanged($fieldName, $changeLevel);
+        } finally {
+            $this->inIsChanged = false;
+        }
+    }
+
     /**
      * @config
      *
@@ -60,6 +77,7 @@ class ElementVirtual extends BaseElement
 
         $this->LinkedElement()->setVirtualOwner($this);
     }
+
 
     #[Override]
     public function getCMSFields()
