@@ -10,6 +10,7 @@ use DNADesign\ElementalVirtual\Tests\Src\TestPage;
 use DNADesign\ElementalVirtual\Model\ElementVirtual;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
+use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DB;
 
 class BaseElementExtensionTest extends SapphireTest
@@ -184,5 +185,26 @@ class BaseElementExtensionTest extends SapphireTest
         $ids = $virtual->getLinkableElements()->column('ID');
 
         $this->assertSame([$linked->ID, $untitled->ID, $unused->ID], array_map('intval', $ids));
+    }
+
+    /**
+     * @see https://github.com/dnadesign/silverstripe-elemental-virtual/issues/77
+     */
+    public function testEditLinkWhenOriginalPageIsArchived(): void
+    {
+        $this->logInWithPermission('ADMIN');
+        $virtual = $this->objFromFixture(ElementVirtual::class, 'virtual1');
+
+        $this->assertStringContainsString('/admin/', $virtual->getLinkedElementEditLink());
+
+        $this->page->doArchive();
+        DataObject::flush_and_destroy_cache();
+        $virtual = ElementVirtual::get()->byID($virtual->ID);
+
+        $this->assertNull($virtual->getLinkedElementEditLink());
+
+        $existing = $virtual->getCMSFields()->fieldByName('Root.Main.Existing');
+        $this->assertStringNotContainsString('Click here to edit the original', $existing->getContent());
+        $this->assertStringContainsString('archived or deleted', $existing->getContent());
     }
 }
