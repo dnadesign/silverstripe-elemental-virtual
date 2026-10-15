@@ -7,8 +7,10 @@ use DNADesign\Elemental\Models\BaseElement;
 use DNADesign\ElementalVirtual\Api\UpdateVirtualTitles;
 use DNADesign\ElementalVirtual\Tests\Src\TestElement;
 use DNADesign\ElementalVirtual\Tests\Src\TestElementController;
+use DNADesign\ElementalVirtual\Tests\Src\TestElementList;
 use DNADesign\ElementalVirtual\Tests\Src\TestPage;
 use DNADesign\ElementalVirtual\Model\ElementVirtual;
+use PHPUnit\Framework\Attributes\DataProvider;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\ORM\DataObject;
@@ -24,6 +26,7 @@ class BaseElementExtensionTest extends SapphireTest
 
     protected static $extra_dataobjects = [
         TestElement::class,
+        TestElementList::class,
         TestPage::class
     ];
 
@@ -168,6 +171,29 @@ class BaseElementExtensionTest extends SapphireTest
         $schema = $virtual->getBlockSchema();
 
         $this->assertSame('<p>Hello</p>', $schema['content']);
+    }
+
+    public static function provideNonStringSummaries(): array
+    {
+        return [
+            'array' => [['a', 'b'], null],
+            'empty array' => [[], null],
+            'plain object' => [new \stdClass(), null],
+            'null' => [null, null],
+            'integer' => [5, '5'],
+        ];
+    }
+
+    #[DataProvider('provideNonStringSummaries')]
+    public function testBlockSchemaContentWithNonStringSummary(mixed $summary, ?string $expected): void
+    {
+        TestElementList::$summary = $summary;
+        $linked = TestElementList::create();
+        $linked->write();
+        $virtual = ElementVirtual::create(['LinkedElementID' => $linked->ID]);
+        $virtual->write();
+
+        $this->assertSame($expected, $virtual->getBlockSchema()['content']);
     }
 
     public function testLinkableElementsAreSortedWithUntitledAndUnusedLast(): void

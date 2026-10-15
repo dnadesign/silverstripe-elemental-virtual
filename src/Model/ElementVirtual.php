@@ -13,6 +13,7 @@ use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\SearchableDropdownField;
 use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\DataObject;
+use Stringable;
 
 /**
  * Virtual Linked Element.
@@ -230,10 +231,18 @@ class ElementVirtual extends BaseElement
     public function getSummary(): ?string
     {
         $linked = $this->LinkedElement();
-        if ($linked && $linked->exists()) {
-            // Linked elements may return a DBField (e.g. DBHTMLText) which
-            // can't be serialised into the block schema (#28)
-            return (string) $linked->getSummary();
+        if (!$linked || !$linked->exists()) {
+            return null;
+        }
+
+        // Linked elements may return a DBField (e.g. DBHTMLText) or another
+        // non-string value, which can't be serialised into the block schema (#28)
+        $summary = $linked->getSummary();
+        if (is_string($summary)) {
+            return $summary;
+        }
+        if (is_scalar($summary) || $summary instanceof Stringable) {
+            return (string) $summary;
         }
 
         return null;
