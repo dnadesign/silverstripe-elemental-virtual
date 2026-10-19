@@ -124,9 +124,10 @@ class BaseElementExtensionTest extends SapphireTest
         $this->page->write();
 
         $linked = TestElement::create([
-            'Title' => str_repeat('B', 100),
+            'Title' => str_repeat('B', 220),
             'ParentID' => $this->page->ElementalAreaID,
         ]);
+        $this->assertGreaterThan(200, mb_strlen($linked->Title));
         $linked->write();
 
         $this->assertSame(200, mb_strlen($linked->VirtualLookupTitle));
