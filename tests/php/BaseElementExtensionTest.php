@@ -116,6 +116,7 @@ class BaseElementExtensionTest extends SapphireTest
             'ParentID' => $this->page->ElementalAreaID,
         ]);
         $short->write();
+        $short = TestElement::get()->byID($short->ID);
         $this->assertStringStartsWith('Short title (', $short->VirtualLookupTitle);
         $this->assertStringContainsString(' - used on Page 1)', $short->VirtualLookupTitle);
         $this->assertLessThanOrEqual(200, mb_strlen($short->VirtualLookupTitle));
