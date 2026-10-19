@@ -109,6 +109,25 @@ class BaseElementExtensionTest extends SapphireTest
         $this->assertStringStartsWith("Bob's block (", $linked->VirtualLookupTitle);
     }
 
+    public function testVirtualLookupTitleIsTrimmedToFieldLengthOnWriteAndPublish(): void
+    {
+        $this->page->Title = str_repeat('P', 90);
+        $this->page->write();
+
+        $linked = TestElement::create([
+            'Title' => str_repeat('B', 100),
+            'ParentID' => $this->page->ElementalAreaID,
+        ]);
+        $linked->write();
+
+        $this->assertSame(200, mb_strlen($linked->VirtualLookupTitle));
+
+        $linked->publishSingle();
+        $linked->write();
+
+        $this->assertSame(200, mb_strlen($linked->VirtualLookupTitle));
+    }
+
     public function testUpdateVirtualTitlesBackfillsMissingTitles(): void
     {
         $linked = $this->objFromFixture(TestElement::class, 'element1');
