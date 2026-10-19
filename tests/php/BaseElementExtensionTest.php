@@ -129,6 +129,7 @@ class BaseElementExtensionTest extends SapphireTest
         ]);
         $this->assertGreaterThan(200, mb_strlen($linked->Title));
         $linked->write();
+        $linked = TestElement::get()->byID($linked->ID);
 
         $this->assertSame(200, mb_strlen($linked->VirtualLookupTitle));
         $firstLookupTitle = $linked->VirtualLookupTitle;
