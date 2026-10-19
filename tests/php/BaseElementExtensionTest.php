@@ -127,8 +127,7 @@ class BaseElementExtensionTest extends SapphireTest
             'Title' => str_repeat('B', 220),
             'ParentID' => $this->page->ElementalAreaID,
         ]);
-        $minimumUntrimmedLength = mb_strlen(sprintf('%s (%s #%s - used on %s)', $linked->Title, 'T', '1', $this->page->Title));
-        $this->assertGreaterThan(200, $minimumUntrimmedLength);
+        $this->assertGreaterThan(200, mb_strlen($linked->Title));
         $linked->write();
         $linked = TestElement::get()->byID($linked->ID);
 
