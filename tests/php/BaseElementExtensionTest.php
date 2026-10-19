@@ -111,6 +111,13 @@ class BaseElementExtensionTest extends SapphireTest
 
     public function testVirtualLookupTitleIsTrimmedToFieldLengthOnWriteAndPublish(): void
     {
+        $short = TestElement::create([
+            'Title' => 'Short title',
+            'ParentID' => $this->page->ElementalAreaID,
+        ]);
+        $short->write();
+        $this->assertSame($short->getVirtualLinkedSummary(), $short->VirtualLookupTitle);
+
         $this->page->Title = str_repeat('P', 90);
         $this->page->write();
 
@@ -121,11 +128,13 @@ class BaseElementExtensionTest extends SapphireTest
         $linked->write();
 
         $this->assertSame(200, mb_strlen($linked->VirtualLookupTitle));
+        $firstLookupTitle = $linked->VirtualLookupTitle;
 
         $linked->publishSingle();
         $linked->write();
 
         $this->assertSame(200, mb_strlen($linked->VirtualLookupTitle));
+        $this->assertSame($firstLookupTitle, $linked->VirtualLookupTitle);
     }
 
     public function testUpdateVirtualTitlesBackfillsMissingTitles(): void
