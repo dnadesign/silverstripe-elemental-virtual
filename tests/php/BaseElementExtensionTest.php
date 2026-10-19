@@ -133,6 +133,7 @@ class BaseElementExtensionTest extends SapphireTest
         $firstLookupTitle = $linked->VirtualLookupTitle;
 
         $linked->publishSingle();
+        $linked = TestElement::get()->byID($linked->ID);
 
         $this->assertSame(200, mb_strlen($linked->VirtualLookupTitle));
         $this->assertSame($firstLookupTitle, $linked->VirtualLookupTitle);
