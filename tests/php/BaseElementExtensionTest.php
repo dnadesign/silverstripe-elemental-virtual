@@ -117,6 +117,7 @@ class BaseElementExtensionTest extends SapphireTest
         ]);
         $short->write();
         $this->assertSame($short->getVirtualLinkedSummary(), $short->VirtualLookupTitle);
+        $this->assertLessThanOrEqual(200, mb_strlen($short->VirtualLookupTitle));
 
         $this->page->Title = str_repeat('P', 90);
         $this->page->write();
