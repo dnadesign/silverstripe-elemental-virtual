@@ -109,6 +109,38 @@ class BaseElementExtensionTest extends SapphireTest
         $this->assertStringStartsWith("Bob's block (", $linked->VirtualLookupTitle);
     }
 
+    public function testVirtualLookupTitleIsTrimmedToFieldLengthOnWriteAndPublish(): void
+    {
+        $short = TestElement::create([
+            'Title' => 'Short title',
+            'ParentID' => $this->page->ElementalAreaID,
+        ]);
+        $short->write();
+        $short = TestElement::get()->byID($short->ID);
+        $this->assertStringStartsWith('Short title (', $short->VirtualLookupTitle);
+        $this->assertStringContainsString(' - used on Page 1)', $short->VirtualLookupTitle);
+        $this->assertLessThanOrEqual(200, mb_strlen($short->VirtualLookupTitle));
+
+        $this->page->Title = str_repeat('P', 90);
+        $this->page->write();
+
+        $linked = TestElement::create([
+            'Title' => str_repeat('B', 220),
+            'ParentID' => $this->page->ElementalAreaID,
+        ]);
+        $linked->write();
+        $linked = TestElement::get()->byID($linked->ID);
+
+        $this->assertSame(200, mb_strlen($linked->VirtualLookupTitle));
+        $firstLookupTitle = $linked->VirtualLookupTitle;
+
+        $linked->publishSingle();
+        $linked = TestElement::get()->byID($linked->ID);
+
+        $this->assertSame(200, mb_strlen($linked->VirtualLookupTitle));
+        $this->assertSame($firstLookupTitle, $linked->VirtualLookupTitle);
+    }
+
     public function testUpdateVirtualTitlesBackfillsMissingTitles(): void
     {
         $linked = $this->objFromFixture(TestElement::class, 'element1');

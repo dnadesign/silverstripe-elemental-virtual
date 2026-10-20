@@ -23,6 +23,8 @@ use SilverStripe\Versioned\Versioned;
 
 class BaseElementExtension extends Extension
 {
+    private const VIRTUAL_LOOKUP_TITLE_MAX_LENGTH = 200;
+
     /**
      * @config
      *
@@ -121,7 +123,11 @@ class BaseElementExtension extends Extension
 
         $owner->invokeWithExtensions('updateVirtualLinkedSummary', $summary);
 
-        return $summary;
+        if (mb_strlen($summary ?? '') <= self::VIRTUAL_LOOKUP_TITLE_MAX_LENGTH) {
+            return $summary;
+        }
+
+        return mb_substr($summary, 0, self::VIRTUAL_LOOKUP_TITLE_MAX_LENGTH);
     }
 
     public static function not_in_use_string(): string
