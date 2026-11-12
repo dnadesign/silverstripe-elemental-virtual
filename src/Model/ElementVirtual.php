@@ -5,6 +5,7 @@ namespace DNADesign\ElementalVirtual\Model;
 use Override;
 use DNADesign\Elemental\Models\BaseElement;
 use DNADesign\ElementalVirtual\Extensions\BaseElementExtension;
+use DNADesign\ElementalVirtual\Search\LinkableElementSearchContext;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\Convert;
 use SilverStripe\Forms\DropdownField;
@@ -138,7 +139,8 @@ class ElementVirtual extends BaseElement
         if ($field instanceof SearchableDropdownField) {
             $field
                 ->setSource($list)
-                ->setLabelField($titleField);
+                ->setLabelField($titleField)
+                ->setSearchContext(LinkableElementSearchContext::create($list, $titleField));
         } elseif ($field instanceof DropdownField) {
             $field
                 ->setSource($list->map('ID', $titleField)->toArray())
