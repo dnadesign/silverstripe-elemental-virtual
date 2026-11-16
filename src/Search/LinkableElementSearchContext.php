@@ -26,7 +26,7 @@ class LinkableElementSearchContext extends SearchContext
      * Sort is ignored so that the linkable list's own ordering is kept
      */
     #[Override]
-    public function getQuery($searchParams, $sort = false, int|array|null $limit = null, $existingQuery = null)
+    public function getQuery($searchParams, $sort = false, int|array|null $limit = null, $existingQuery = null): DataList
     {
         $list = $this->linkableElements;
         $term = trim((string) (is_array($searchParams) ? reset($searchParams) : ''));
